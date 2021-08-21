@@ -23,11 +23,17 @@ This has a couple of advantages:
 import qualified Unwitch.Convert.Double as Double
 
 main = do
+  Double.toInteger 5.0 `shouldBe` Right 5
   Double.toInteger 5.6 `shouldBe` Left $ RationalConversion $ DenomNotOne (5 % 6)
+  Double.toFloat 5.6 `shouldBe` 5.6
 ```
-
-Furthermore if the client can figure out how to go on with a Rational,
-they can.
+Type applications are unnecessary because there is no polymorphism.
+Since there are no polymorphic types we don't need to distinct
+between conversions that fail and conversions that don't,
+This is encoded in types.
+Furthermore on failure, if the client can figure out how to go on with a
+Rational, they can.
+In witch this information gets squashed, we happily provide it.
 It's not an exception like witch implied.
 
 ### Tools
