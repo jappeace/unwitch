@@ -2,7 +2,12 @@
 [![Jappiejappie](https://img.shields.io/badge/twitch.tv-jappiejappie-purple?logo=twitch)](https://www.twitch.tv/jappiejappie)
 [![Jappiejappie](https://img.shields.io/badge/discord-jappiejappie-black?logo=discord)](https://discord.gg/Hp4agqy)
 
-> Three hundred and twenty years have passed since the coven sank in the dark. Phantom from the past. Time that started to move again.
+# NOTE
+I abandoned this because I thought it was to boring to implement 👨🔫.
+“
+
+> Three hundred and twenty years have passed since the coven sank in the dark. 
+
 
 Removes the magic from witch.
 This provides safe conversions like witch does.
