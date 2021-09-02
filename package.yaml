@@ -51,6 +51,9 @@ dependencies:
 
 library:
   source-dirs: src
+  other-modules:
+    - Unwitch
+    - Unwitch.Constant
 
 tests:
   unit:
