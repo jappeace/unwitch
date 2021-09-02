@@ -1,9 +1,9 @@
-module Unwitch
-  ( libF
-  )
-where
+-- just used to load ghci
+module Unwitch () where
 
-import           Control.Monad.IO.Class
-
-libF :: MonadIO m => m ()
-libF = liftIO $ putStrLn "hello, world ss"
+import Unwitch.Errors ()
+import Unwitch.Constant()
+import Unwitch.Convert.Double ()
+import Unwitch.Convert.Float ()
+import Unwitch.Convert.Integer ()
+import Unwitch.Convert.Ratio ()
