@@ -2,10 +2,6 @@
 [![Jappiejappie](https://img.shields.io/badge/twitch.tv-jappiejappie-purple?logo=twitch)](https://www.twitch.tv/jappiejappie)
 [![Jappiejappie](https://img.shields.io/badge/discord-jappiejappie-black?logo=discord)](https://discord.gg/Hp4agqy)
 
-# NOTE
-I abandoned this because I thought it was to boring to implement 👨🔫.
-“
-
 > Three hundred and twenty years have passed since the coven sank in the dark. 
 
 
