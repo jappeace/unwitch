@@ -28,10 +28,12 @@ import qualified Unwitch.Convert.Double as Double
 ```
 Next you simply use the functions within the module
 to convert to something you want, for example:
+
 ```haskell
 spec = do
   Double.toFloat 5.6 `shouldBe` 5.6
 ```
+
 Although dubious since float holds less information
 then double,
 this can never fail in the current implementation.
@@ -49,13 +51,6 @@ The library will attempt to give you as much information
 as possible,
 in this case the denominator wasn't 1 so the rational
 conversion failed.
-
-Because we specify exactly what can go wrong beforehand,
-client code maybe able to recover.
-There is no need to give these functions different names
-like `toIntegerError` because the type system
-will inform the programmer that he needs to check the error
-branches.
 
 ## Comparison 
 
@@ -92,3 +87,13 @@ make run
 make ghcid
 ```
 
+## Design decisions
+
++ Modules names indicate where you're converting *from*.
++ Errors should be packed with information to allow recovery
++ Only restricted to primitives in base.
+  The original witch had support for Map, and Text.
+  I feel this is out of scope.
+
+https://serokell.io/blog/introduction-to-template-haskell
+  
