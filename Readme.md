@@ -29,6 +29,7 @@ import qualified Unwitch.Convert.Double as Double
 Next you simply use the functions within the module
 to convert to something you want, for example:
 ```haskell
+spec = do
   Double.toFloat 5.6 `shouldBe` 5.6
 ```
 Although dubious since float holds less information
@@ -36,8 +37,8 @@ then double,
 this can never fail in the current implementation.
 But there are situation where conversion can fail,
 such as when converting to an integer:
-```
-main = do
+```haskell
+spec = do
   Double.toInteger 5.0 `shouldBe` Right 5
   Double.toInteger 5.6 `shouldBe` Left $ RationalConversion $ DenomNotOne (5 % 6)
 ```
