@@ -12,6 +12,7 @@ module Unwitch.Convert.Double
   , toWord32
   , toWord64
   , toWord
+  , toNatural
   , ViaIntegerErrors(..)
   , IntegerErrors(..)
   , RationalErrors(..)
@@ -28,6 +29,7 @@ import           Prelude hiding (toRational, toInteger)
 import qualified Unwitch.Convert.Integer as Integer
 import Data.Word
 import Data.Int
+import Numeric.Natural (Natural)
 
 -- loses precision?!
 toFloat :: Double -> Float
@@ -71,6 +73,13 @@ toWord64 = toViaInteger Integer.toWord64
 
 toWord :: Double -> Either ViaIntegerErrors Word
 toWord = toViaInteger Integer.toWord
+
+toNatural :: Double -> Either ViaIntegerErrors Natural
+toNatural double = do
+  integer <- first MkInteger $ toInteger double
+  case Integer.toNatural integer of
+    Left err -> Left $ MkInteger $ IntegerFlow integer err
+    Right n -> Right n
 
 toViaInteger :: (Integer -> Maybe a) -> Double -> Either ViaIntegerErrors a
 toViaInteger fun x = do
