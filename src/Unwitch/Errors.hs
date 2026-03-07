@@ -5,3 +5,4 @@ where
 
 data Overflows = Overflow
                | Underflow
+  deriving (Show, Eq)

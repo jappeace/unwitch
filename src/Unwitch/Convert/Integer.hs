@@ -1,5 +1,6 @@
 module Unwitch.Convert.Integer
   ( toDouble
+  , toFloat
   , toInt8
   , toInt16
   , toInt32
@@ -10,6 +11,7 @@ module Unwitch.Convert.Integer
   , toWord32
   , toWord64
   , toWord
+  , toNatural
   )
 where
 
@@ -18,12 +20,24 @@ import           Unwitch.Constant
 import qualified Data.Bits as Bits
 import Data.Word
 import Data.Int
+import Numeric.Natural (Natural)
 
 
 toDouble :: Integer -> Either Overflows Double
 toDouble integer = if
     | integer < -maxIntegralRepDouble -> Left Underflow
     | integer > maxIntegralRepDouble -> Left Overflow
+    | otherwise -> Right $ Prelude.fromIntegral integer
+
+toFloat :: Integer -> Either Overflows Float
+toFloat integer = if
+    | integer < -maxIntegralRepFloat -> Left Underflow
+    | integer > maxIntegralRepFloat -> Left Overflow
+    | otherwise -> Right $ Prelude.fromIntegral integer
+
+toNatural :: Integer -> Either Overflows Natural
+toNatural integer = if
+    | integer < 0 -> Left Underflow
     | otherwise -> Right $ Prelude.fromIntegral integer
 
 toInt8 :: Integer -> Maybe Int8
