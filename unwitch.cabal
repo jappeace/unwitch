@@ -60,7 +60,10 @@ common common-options
 library
   import: common-options
   exposed-modules:
+      Unwitch.Convert.Char
+      Unwitch.Convert.Complex
       Unwitch.Convert.Double
+      Unwitch.Convert.Fixed
       Unwitch.Convert.Float
       Unwitch.Convert.Int
       Unwitch.Convert.Int8
@@ -103,6 +106,10 @@ test-suite unit
       Test.Convert.FloatSpec
       Test.Convert.DoubleSpec
       Test.Convert.PropertySpec
+      Test.Convert.RatioSpec
+      Test.Convert.FixedSpec
+      Test.Convert.ComplexSpec
+      Test.Convert.CharSpec
       Paths_unwitch
   hs-source-dirs:
       test

@@ -3,6 +3,7 @@ module Test.Convert.DoubleSpec (spec) where
 import Test.Hspec
 import Data.Int
 import Data.Word
+import Numeric.Natural (Natural)
 import Unwitch.Errors
 import qualified Unwitch.Convert.Double as Double
 
@@ -72,6 +73,14 @@ spec = describe "Unwitch.Convert.Double" $ do
   describe "toWord" $
     it "converts in-range" $
       Double.toWord 42.0 `shouldBe` Right (42 :: Word)
+
+  describe "toNatural" $ do
+    it "converts positive whole number" $
+      Double.toNatural 42.0 `shouldBe` Right (42 :: Natural)
+    it "rejects negative" $
+      Double.toNatural (-1.0) `shouldSatisfy` isLeft
+    it "rejects fractional" $
+      Double.toNatural 1.5 `shouldSatisfy` isLeft
 
 isLeft :: Either a b -> Bool
 isLeft (Left _) = True

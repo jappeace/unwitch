@@ -1,6 +1,7 @@
 module Unwitch.Convert.Integer
   ( toDouble
   , toFloat
+  , toNatural
   , toInt8
   , toInt16
   , toInt32
@@ -11,7 +12,6 @@ module Unwitch.Convert.Integer
   , toWord32
   , toWord64
   , toWord
-  , toNatural
   )
 where
 
