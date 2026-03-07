@@ -6,6 +6,9 @@ import Numeric.Natural (Natural)
 import Unwitch.Errors
 import qualified Unwitch.Convert.Int as Int
 
+-- Property tests only cover Int.toNatural (iff negative).
+-- All other Int conversions have no property coverage.
+
 spec :: Spec
 spec = describe "Unwitch.Convert.Int" $ do
 
@@ -23,9 +26,7 @@ spec = describe "Unwitch.Convert.Int" $ do
     it "converts in-range" $
       Int.toInt32 (1000 :: Int) `shouldBe` Just (1000 :: Int32)
 
-  describe "toInt64 (infallible)" $ do
-    it "widens 0" $
-      Int.toInt64 0 `shouldBe` (0 :: Int64)
+  describe "toInt64 (infallible)" $
     it "widens maxBound" $
       Int.toInt64 maxBound `shouldBe` fromIntegral (maxBound :: Int)
 
@@ -56,15 +57,15 @@ spec = describe "Unwitch.Convert.Int" $ do
       Int.toWord 0 `shouldBe` Just (0 :: Word)
 
   describe "toNatural" $ do
-    it "rejects negative" $
+    it "rejects negative with Underflow" $
       Int.toNatural (-1 :: Int) `shouldBe` Left Underflow
     it "converts 0" $
       Int.toNatural 0 `shouldBe` Right (0 :: Natural)
 
   describe "toFloat (range-checked)" $ do
-    it "converts in-range" $
+    it "converts at boundary" $
       Int.toFloat (16777215 :: Int) `shouldBe` Right 16777215.0
-    it "rejects too large" $
+    it "rejects above boundary" $
       Int.toFloat (16777216 :: Int) `shouldBe` Left Overflow
 
   describe "toDouble (range-checked)" $
