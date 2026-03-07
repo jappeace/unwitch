@@ -103,6 +103,7 @@ test-suite unit
       Test.Convert.IntegerSpec
       Test.Convert.FloatSpec
       Test.Convert.DoubleSpec
+      Test.Convert.PropertySpec
       Paths_unwitch
   hs-source-dirs:
       test

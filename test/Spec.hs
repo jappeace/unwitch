@@ -16,6 +16,7 @@ import qualified Test.Convert.NaturalSpec
 import qualified Test.Convert.IntegerSpec
 import qualified Test.Convert.FloatSpec
 import qualified Test.Convert.DoubleSpec
+import qualified Test.Convert.PropertySpec
 
 main :: IO ()
 main = hspec $ do
@@ -34,3 +35,4 @@ main = hspec $ do
   Test.Convert.IntegerSpec.spec
   Test.Convert.FloatSpec.spec
   Test.Convert.DoubleSpec.spec
+  Test.Convert.PropertySpec.spec

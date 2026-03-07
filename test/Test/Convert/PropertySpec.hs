@@ -1,0 +1,250 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+module Test.Convert.PropertySpec (spec) where
+
+import Test.Hspec
+import Test.Hspec.QuickCheck (prop)
+import Data.Int
+import Data.Word
+import qualified Unwitch.Convert.Int8 as Int8
+import qualified Unwitch.Convert.Int16 as Int16
+import qualified Unwitch.Convert.Int32 as Int32
+import qualified Unwitch.Convert.Int64 as Int64
+import qualified Unwitch.Convert.Int as Int
+import qualified Unwitch.Convert.Word8 as Word8
+import qualified Unwitch.Convert.Word16 as Word16
+import qualified Unwitch.Convert.Word32 as Word32
+import qualified Unwitch.Convert.Word64 as Word64
+import qualified Unwitch.Convert.Natural as Natural
+import qualified Unwitch.Convert.Integer as Integer
+
+spec :: Spec
+spec = describe "Property tests" $ do
+
+  describe "Round-trip: widen then narrow recovers original" $ do
+    prop "Int8 -> Int16 -> Int8" $ \(x :: Int8) ->
+      Int16.toInt8 (Int8.toInt16 x) `shouldBe` Just x
+
+    prop "Int8 -> Int32 -> Int8" $ \(x :: Int8) ->
+      Int32.toInt8 (Int8.toInt32 x) `shouldBe` Just x
+
+    prop "Int8 -> Int64 -> Int8" $ \(x :: Int8) ->
+      Int64.toInt8 (Int8.toInt64 x) `shouldBe` Just x
+
+    prop "Int8 -> Integer -> Int8" $ \(x :: Int8) ->
+      Integer.toInt8 (Int8.toInteger x) `shouldBe` Just x
+
+    prop "Int16 -> Int32 -> Int16" $ \(x :: Int16) ->
+      Int32.toInt16 (Int16.toInt32 x) `shouldBe` Just x
+
+    prop "Int16 -> Int64 -> Int16" $ \(x :: Int16) ->
+      Int64.toInt16 (Int16.toInt64 x) `shouldBe` Just x
+
+    prop "Int32 -> Int64 -> Int32" $ \(x :: Int32) ->
+      Int64.toInt32 (Int32.toInt64 x) `shouldBe` Just x
+
+    prop "Word8 -> Word16 -> Word8" $ \(x :: Word8) ->
+      Word16.toWord8 (Word8.toWord16 x) `shouldBe` Just x
+
+    prop "Word8 -> Word32 -> Word8" $ \(x :: Word8) ->
+      Word32.toWord8 (Word8.toWord32 x) `shouldBe` Just x
+
+    prop "Word8 -> Word64 -> Word8" $ \(x :: Word8) ->
+      Word64.toWord8 (Word8.toWord64 x) `shouldBe` Just x
+
+    prop "Word16 -> Word32 -> Word16" $ \(x :: Word16) ->
+      Word32.toWord16 (Word16.toWord32 x) `shouldBe` Just x
+
+    prop "Word16 -> Word64 -> Word16" $ \(x :: Word16) ->
+      Word64.toWord16 (Word16.toWord64 x) `shouldBe` Just x
+
+    prop "Word32 -> Word64 -> Word32" $ \(x :: Word32) ->
+      Word64.toWord32 (Word32.toWord64 x) `shouldBe` Just x
+
+    prop "Word8 -> Int16 -> Word8" $ \(x :: Word8) ->
+      Int16.toWord8 (Word8.toInt16 x) `shouldBe` Just x
+
+    prop "Word8 -> Int32 -> Word8" $ \(x :: Word8) ->
+      Int32.toWord8 (Word8.toInt32 x) `shouldBe` Just x
+
+  describe "Fallible narrowing success agrees with fromIntegral" $ do
+    prop "Int16 -> Int8: success implies fromIntegral match" $ \(x :: Int16) ->
+      case Int16.toInt8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Int32 -> Int16: success implies fromIntegral match" $ \(x :: Int32) ->
+      case Int32.toInt16 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Int64 -> Int32: success implies fromIntegral match" $ \(x :: Int64) ->
+      case Int64.toInt32 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Word16 -> Word8: success implies fromIntegral match" $ \(x :: Word16) ->
+      case Word16.toWord8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Word32 -> Word16: success implies fromIntegral match" $ \(x :: Word32) ->
+      case Word32.toWord16 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Word64 -> Word32: success implies fromIntegral match" $ \(x :: Word64) ->
+      case Word64.toWord32 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Integer -> Int8: success implies fromIntegral match" $ \(x :: Integer) ->
+      case Integer.toInt8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Integer -> Word8: success implies fromIntegral match" $ \(x :: Integer) ->
+      case Integer.toWord8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+  describe "toNatural rejects iff negative" $ do
+    prop "Int8 -> Natural: Left iff x < 0" $ \(x :: Int8) ->
+      isLeft (Int8.toNatural x) `shouldBe` (x < 0)
+
+    prop "Int16 -> Natural: Left iff x < 0" $ \(x :: Int16) ->
+      isLeft (Int16.toNatural x) `shouldBe` (x < 0)
+
+    prop "Int32 -> Natural: Left iff x < 0" $ \(x :: Int32) ->
+      isLeft (Int32.toNatural x) `shouldBe` (x < 0)
+
+    prop "Int64 -> Natural: Left iff x < 0" $ \(x :: Int64) ->
+      isLeft (Int64.toNatural x) `shouldBe` (x < 0)
+
+    prop "Int -> Natural: Left iff x < 0" $ \(x :: Int) ->
+      isLeft (Int.toNatural x) `shouldBe` (x < 0)
+
+    prop "Integer -> Natural: Left iff x < 0" $ \(x :: Integer) ->
+      isLeft (Integer.toNatural x) `shouldBe` (x < 0)
+
+  describe "toNatural success preserves value" $ do
+    prop "Int64 -> Natural -> Integer round-trips via Integer" $ \(x :: Int64) ->
+      case Int64.toNatural x of
+        Right n  -> Natural.toInteger n `shouldBe` fromIntegral x
+        Left _   -> pure ()
+
+    prop "Word64 -> Natural -> Integer preserves value" $ \(x :: Word64) ->
+      Natural.toInteger (Word64.toNatural x) `shouldBe` fromIntegral x
+
+  describe "Float range check is exact at boundary" $ do
+    prop "Int32 -> Float: succeeds iff abs value <= maxRepFloat" $ \(x :: Int32) ->
+      let xi = fromIntegral x :: Integer
+      in isRight (Int32.toFloat x) `shouldBe`
+           (xi >= -maxRepFloat && xi <= maxRepFloat)
+
+    prop "Word32 -> Float: succeeds iff value <= maxRepFloat" $ \(x :: Word32) ->
+      isRight (Word32.toFloat x) `shouldBe`
+        (fromIntegral x <= (maxRepFloat :: Integer))
+
+    prop "Int64 -> Float: succeeds iff abs value <= maxRepFloat" $ \(x :: Int64) ->
+      let xi = fromIntegral x :: Integer
+      in isRight (Int64.toFloat x) `shouldBe`
+           (xi >= -maxRepFloat && xi <= maxRepFloat)
+
+    prop "Word64 -> Float: succeeds iff value <= maxRepFloat" $ \(x :: Word64) ->
+      isRight (Word64.toFloat x) `shouldBe`
+        (fromIntegral x <= (maxRepFloat :: Integer))
+
+    prop "Integer -> Float: succeeds iff abs value <= maxRepFloat" $ \(x :: Integer) ->
+      isRight (Integer.toFloat x) `shouldBe`
+        (x >= -maxRepFloat && x <= maxRepFloat)
+
+  describe "Double range check is exact at boundary" $ do
+    prop "Int64 -> Double: succeeds iff abs value <= maxRepDouble" $ \(x :: Int64) ->
+      let xi = fromIntegral x :: Integer
+      in isRight (Int64.toDouble x) `shouldBe`
+           (xi >= -maxRepDouble && xi <= maxRepDouble)
+
+    prop "Word64 -> Double: succeeds iff value <= maxRepDouble" $ \(x :: Word64) ->
+      isRight (Word64.toDouble x) `shouldBe`
+        (fromIntegral x <= (maxRepDouble :: Integer))
+
+    prop "Integer -> Double: succeeds iff abs value <= maxRepDouble" $ \(x :: Integer) ->
+      isRight (Integer.toDouble x) `shouldBe`
+        (x >= -maxRepDouble && x <= maxRepDouble)
+
+  describe "Path independence: different widening paths agree" $ do
+    prop "Int8: toInt32 == toInt16 >> Int16.toInt32" $ \(x :: Int8) ->
+      Int8.toInt32 x `shouldBe` Int16.toInt32 (Int8.toInt16 x)
+
+    prop "Int8: toInt64 == toInt32 >> Int32.toInt64" $ \(x :: Int8) ->
+      Int8.toInt64 x `shouldBe` Int32.toInt64 (Int8.toInt32 x)
+
+    prop "Int8: toInteger == toInt64 >> Int64.toInteger" $ \(x :: Int8) ->
+      Int8.toInteger x `shouldBe` Int64.toInteger (Int8.toInt64 x)
+
+    prop "Word8: toWord32 == toWord16 >> Word16.toWord32" $ \(x :: Word8) ->
+      Word8.toWord32 x `shouldBe` Word16.toWord32 (Word8.toWord16 x)
+
+    prop "Word8: toWord64 == toWord32 >> Word32.toWord64" $ \(x :: Word8) ->
+      Word8.toWord64 x `shouldBe` Word32.toWord64 (Word8.toWord32 x)
+
+    prop "Word8: toInteger == toWord64 >> Word64.toInteger" $ \(x :: Word8) ->
+      Word8.toInteger x `shouldBe` Word64.toInteger (Word8.toWord64 x)
+
+  describe "Infallible conversions preserve numeric value (via Integer)" $ do
+    prop "Int8.toFloat preserves value" $ \(x :: Int8) ->
+      Int8.toFloat x `shouldBe` fromIntegral x
+
+    prop "Int8.toDouble preserves value" $ \(x :: Int8) ->
+      Int8.toDouble x `shouldBe` fromIntegral x
+
+    prop "Int16.toFloat preserves value" $ \(x :: Int16) ->
+      Int16.toFloat x `shouldBe` fromIntegral x
+
+    prop "Int16.toDouble preserves value" $ \(x :: Int16) ->
+      Int16.toDouble x `shouldBe` fromIntegral x
+
+    prop "Word8.toFloat preserves value" $ \(x :: Word8) ->
+      Word8.toFloat x `shouldBe` fromIntegral x
+
+    prop "Word8.toDouble preserves value" $ \(x :: Word8) ->
+      Word8.toDouble x `shouldBe` fromIntegral x
+
+    prop "Word16.toFloat preserves value" $ \(x :: Word16) ->
+      Word16.toFloat x `shouldBe` fromIntegral x
+
+    prop "Word16.toDouble preserves value" $ \(x :: Word16) ->
+      Word16.toDouble x `shouldBe` fromIntegral x
+
+    prop "Int32.toDouble preserves value" $ \(x :: Int32) ->
+      Int32.toDouble x `shouldBe` fromIntegral x
+
+    prop "Word32.toDouble preserves value" $ \(x :: Word32) ->
+      Word32.toDouble x `shouldBe` fromIntegral x
+
+  describe "Signed-to-unsigned: Nothing iff negative or too large" $ do
+    prop "Int8 -> Word8: Nothing iff x < 0" $ \(x :: Int8) ->
+      (Int8.toWord8 x == Nothing) `shouldBe` (x < 0)
+
+    prop "Int16 -> Word16: Nothing iff x < 0" $ \(x :: Int16) ->
+      (Int16.toWord16 x == Nothing) `shouldBe` (x < 0)
+
+    prop "Int32 -> Word32: Nothing iff x < 0" $ \(x :: Int32) ->
+      (Int32.toWord32 x == Nothing) `shouldBe` (x < 0)
+
+    prop "Int64 -> Word64: Nothing iff x < 0" $ \(x :: Int64) ->
+      (Int64.toWord64 x == Nothing) `shouldBe` (x < 0)
+
+maxRepFloat :: Num a => a
+maxRepFloat = 16777215
+
+maxRepDouble :: Num a => a
+maxRepDouble = 9007199254740991
+
+isLeft :: Either a b -> Bool
+isLeft (Left _)  = True
+isLeft (Right _) = False
+
+isRight :: Either a b -> Bool
+isRight (Right _) = True
+isRight (Left _)  = False
