@@ -36,9 +36,11 @@ toFloat = F.double2Float
 data IntegerErrors = IntegerFlow Integer Overflows
                    | RationalConversion RationalErrors
                    | DenomNotOne Rational
+  deriving (Show, Eq)
 
 data ViaIntegerErrors = MkInteger IntegerErrors
                       | BitConversionFailed Integer
+  deriving (Show, Eq)
 
 toInt8 :: Double -> Either ViaIntegerErrors Int8
 toInt8 = toViaInteger Integer.toInt8
@@ -87,6 +89,7 @@ toInteger double = do
 
 data RationalErrors = IsNan
                     | IsInf Overflows
+  deriving (Show, Eq)
 
 toRational :: Double -> Either RationalErrors Rational
 toRational double = if

@@ -62,8 +62,19 @@ library
   exposed-modules:
       Unwitch.Convert.Double
       Unwitch.Convert.Float
+      Unwitch.Convert.Int
+      Unwitch.Convert.Int8
+      Unwitch.Convert.Int16
+      Unwitch.Convert.Int32
+      Unwitch.Convert.Int64
       Unwitch.Convert.Integer
+      Unwitch.Convert.Natural
       Unwitch.Convert.Ratio
+      Unwitch.Convert.Word
+      Unwitch.Convert.Word8
+      Unwitch.Convert.Word16
+      Unwitch.Convert.Word32
+      Unwitch.Convert.Word64
       Unwitch.Errors
   other-modules:
       Unwitch
@@ -77,7 +88,21 @@ test-suite unit
   main-is: Spec.hs
   ghc-options: -threaded -rtsopts "-with-rtsopts=-N" -Wno-unused-packages
   other-modules:
-      Test.TestSpec
+      Test.Convert.Int8Spec
+      Test.Convert.Int16Spec
+      Test.Convert.Int32Spec
+      Test.Convert.Int64Spec
+      Test.Convert.IntSpec
+      Test.Convert.Word8Spec
+      Test.Convert.Word16Spec
+      Test.Convert.Word32Spec
+      Test.Convert.Word64Spec
+      Test.Convert.WordSpec
+      Test.Convert.NaturalSpec
+      Test.Convert.IntegerSpec
+      Test.Convert.FloatSpec
+      Test.Convert.DoubleSpec
+      Test.Convert.PropertySpec
       Paths_unwitch
   hs-source-dirs:
       test
