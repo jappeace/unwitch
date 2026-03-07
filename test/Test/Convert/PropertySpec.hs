@@ -16,6 +16,8 @@ import qualified Unwitch.Convert.Word32 as Word32
 import qualified Unwitch.Convert.Word64 as Word64
 import qualified Unwitch.Convert.Natural as Natural
 import qualified Unwitch.Convert.Integer as Integer
+import qualified Unwitch.Convert.Float as Float
+import qualified Unwitch.Convert.Double as Double
 
 spec :: Spec
 spec = describe "Property tests" $ do
@@ -104,6 +106,36 @@ spec = describe "Property tests" $ do
 
     prop "Integer -> Word8: success implies fromIntegral match" $ \(x :: Integer) ->
       case Integer.toWord8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Int32 -> Int8: success implies fromIntegral match" $ \(x :: Int32) ->
+      case Int32.toInt8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Int64 -> Int16: success implies fromIntegral match" $ \(x :: Int64) ->
+      case Int64.toInt16 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Int64 -> Int8: success implies fromIntegral match" $ \(x :: Int64) ->
+      case Int64.toInt8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Word32 -> Word8: success implies fromIntegral match" $ \(x :: Word32) ->
+      case Word32.toWord8 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Word64 -> Word16: success implies fromIntegral match" $ \(x :: Word64) ->
+      case Word64.toWord16 x of
+        Just y  -> fromIntegral y `shouldBe` x
+        Nothing -> pure ()
+
+    prop "Word64 -> Word8: success implies fromIntegral match" $ \(x :: Word64) ->
+      case Word64.toWord8 x of
         Just y  -> fromIntegral y `shouldBe` x
         Nothing -> pure ()
 
@@ -235,6 +267,80 @@ spec = describe "Property tests" $ do
     prop "Int64 -> Word64: Nothing iff x < 0" $ \(x :: Int64) ->
       (Int64.toWord64 x == Nothing) `shouldBe` (x < 0)
 
+  describe "Cross-sign narrowing: exact failure condition" $ do
+    prop "Int16 -> Word8: Nothing iff x < 0 || x > 255" $ \(x :: Int16) ->
+      (Int16.toWord8 x == Nothing) `shouldBe` (x < 0 || x > 255)
+
+    prop "Int32 -> Word16: Nothing iff x < 0 || x > 65535" $ \(x :: Int32) ->
+      (Int32.toWord16 x == Nothing) `shouldBe` (x < 0 || x > 65535)
+
+    prop "Int64 -> Word32: Nothing iff x < 0 || x > 4294967295" $ \(x :: Int64) ->
+      (Int64.toWord32 x == Nothing) `shouldBe` (x < 0 || x > 4294967295)
+
+    prop "Word16 -> Int8: Nothing iff x > 127" $ \(x :: Word16) ->
+      (Word16.toInt8 x == Nothing) `shouldBe` (x > 127)
+
+    prop "Word32 -> Int16: Nothing iff x > 32767" $ \(x :: Word32) ->
+      (Word32.toInt16 x == Nothing) `shouldBe` (x > 32767)
+
+    prop "Word64 -> Int32: Nothing iff x > 2147483647" $ \(x :: Word64) ->
+      (Word64.toInt32 x == Nothing) `shouldBe` (x > 2147483647)
+
+  describe "Float/Double to integer: exact success condition" $ do
+    prop "Float -> Integer: succeeds iff finite and whole" $ \(x :: Float) ->
+      isRight (Float.toInteger x) `shouldBe` isWholeFloat x
+
+    prop "Float -> Int8: succeeds iff finite, whole, in [-128,127]" $ \(x :: Float) ->
+      let i = truncate x :: Integer
+      in isRight (Float.toInt8 x) `shouldBe`
+           (isWholeFloat x && i >= -128 && i <= 127)
+
+    prop "Float -> Word8: succeeds iff finite, whole, in [0,255]" $ \(x :: Float) ->
+      let i = truncate x :: Integer
+      in isRight (Float.toWord8 x) `shouldBe`
+           (isWholeFloat x && i >= 0 && i <= 255)
+
+    prop "Double -> Integer: succeeds iff finite and whole" $ \(x :: Double) ->
+      isRight (Double.toInteger x) `shouldBe` isWholeDouble x
+
+    prop "Double -> Int8: succeeds iff finite, whole, in [-128,127]" $ \(x :: Double) ->
+      let i = truncate x :: Integer
+      in isRight (Double.toInt8 x) `shouldBe`
+           (isWholeDouble x && i >= -128 && i <= 127)
+
+    prop "Double -> Word8: succeeds iff finite, whole, in [0,255]" $ \(x :: Double) ->
+      let i = truncate x :: Integer
+      in isRight (Double.toWord8 x) `shouldBe`
+           (isWholeDouble x && i >= 0 && i <= 255)
+
+  describe "Integer to Float/Double round-trip via toInteger" $ do
+    prop "Int32 -> Float -> Integer: success round-trips" $ \(x :: Int32) ->
+      case Int32.toFloat x of
+        Right y  -> Float.toInteger y `shouldBe` Right (fromIntegral x)
+        Left _   -> pure ()
+
+    prop "Int64 -> Double -> Integer: success round-trips" $ \(x :: Int64) ->
+      case Int64.toDouble x of
+        Right y  -> Double.toInteger y `shouldBe` Right (fromIntegral x)
+        Left _   -> pure ()
+
+    prop "Word32 -> Float -> Integer: success round-trips" $ \(x :: Word32) ->
+      case Word32.toFloat x of
+        Right y  -> Float.toInteger y `shouldBe` Right (fromIntegral x)
+        Left _   -> pure ()
+
+    prop "Word64 -> Double -> Integer: success round-trips" $ \(x :: Word64) ->
+      case Word64.toDouble x of
+        Right y  -> Double.toInteger y `shouldBe` Right (fromIntegral x)
+        Left _   -> pure ()
+
+  describe "Float to Double round-trip" $ do
+    prop "Float -> Double -> Float preserves value" $ \(x :: Float) ->
+      let y = Double.toFloat (Float.toDouble x)
+      in if isNaN x
+         then y `shouldSatisfy` isNaN
+         else y `shouldBe` x
+
 maxRepFloat :: Num a => a
 maxRepFloat = 16777215
 
@@ -248,3 +354,11 @@ isLeft (Right _) = False
 isRight :: Either a b -> Bool
 isRight (Right _) = True
 isRight (Left _)  = False
+
+isWholeFloat :: Float -> Bool
+isWholeFloat x = not (isNaN x) && not (isInfinite x)
+  && x == fromIntegral (truncate x :: Integer)
+
+isWholeDouble :: Double -> Bool
+isWholeDouble x = not (isNaN x) && not (isInfinite x)
+  && x == fromIntegral (truncate x :: Integer)
