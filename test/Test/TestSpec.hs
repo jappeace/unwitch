@@ -3,7 +3,6 @@ module Test.TestSpec
   )
 where
 
-import           Lib        ()
 import           Test.Hspec
 
 one :: Int
