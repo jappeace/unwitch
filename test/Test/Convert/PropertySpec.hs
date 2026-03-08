@@ -167,6 +167,38 @@ spec = describe "Property tests" $ do
     prop "Char -> Word -> Char" $ \(x :: Char) ->
       Char.fromWord (Char.toWord x) `shouldBe` Just x
 
+    -- Via Float (Either ViaIntegerErrors pattern)
+    prop "Int8 -> Float -> Int8" $ \(x :: Int8) ->
+      Float.toInt8 (Int8.toFloat x) `shouldBe` Right x
+
+    prop "Int16 -> Float -> Int16" $ \(x :: Int16) ->
+      Float.toInt16 (Int16.toFloat x) `shouldBe` Right x
+
+    prop "Word8 -> Float -> Word8" $ \(x :: Word8) ->
+      Float.toWord8 (Word8.toFloat x) `shouldBe` Right x
+
+    prop "Word16 -> Float -> Word16" $ \(x :: Word16) ->
+      Float.toWord16 (Word16.toFloat x) `shouldBe` Right x
+
+    -- Via Double (Either ViaIntegerErrors pattern)
+    prop "Int8 -> Double -> Int8" $ \(x :: Int8) ->
+      Double.toInt8 (Int8.toDouble x) `shouldBe` Right x
+
+    prop "Int16 -> Double -> Int16" $ \(x :: Int16) ->
+      Double.toInt16 (Int16.toDouble x) `shouldBe` Right x
+
+    prop "Int32 -> Double -> Int32" $ \(x :: Int32) ->
+      Double.toInt32 (Int32.toDouble x) `shouldBe` Right x
+
+    prop "Word8 -> Double -> Word8" $ \(x :: Word8) ->
+      Double.toWord8 (Word8.toDouble x) `shouldBe` Right x
+
+    prop "Word16 -> Double -> Word16" $ \(x :: Word16) ->
+      Double.toWord16 (Word16.toDouble x) `shouldBe` Right x
+
+    prop "Word32 -> Double -> Word32" $ \(x :: Word32) ->
+      Double.toWord32 (Word32.toDouble x) `shouldBe` Right x
+
   describe "Fallible narrowing success agrees with fromIntegral" $ do
     prop "Int16 -> Int8: success implies fromIntegral match" $ \(x :: Int16) ->
       case Int16.toInt8 x of
