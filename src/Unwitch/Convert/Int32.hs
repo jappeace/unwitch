@@ -32,6 +32,18 @@ import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
 import           Prelude hiding (toInteger)
+import           GHC.Exts (Int(..), Word(..), Float(..),
+                           int32ToInt#, intToInt8#, int8ToInt#,
+                           intToInt16#, int16ToInt#,
+                           int2Word#, word2Int#,
+                           wordToWord8#, word8ToWord#,
+                           wordToWord16#, word16ToWord#,
+                           wordToWord32#, wordToWord64#,
+                           int2Float#,
+                           (==#), (>=#), (<#), (>#))
+import           GHC.Int (Int8(..), Int16(..), Int32(..))
+import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
+import           GHC.Num.Natural (Natural(NS))
 
 toInt8 :: Int32 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
@@ -77,52 +89,76 @@ toFloat x = if
 toDouble :: Int32 -> Double
 toDouble = fromIntegral
 
+-- | Pattern A: signed narrowing, roundtrip at Int#
 toInt8# :: Int32 -> (# Int8 | (# #) #)
-toInt8# x = case toInt8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt8# (I32# x32#) =
+  let i# = int32ToInt# x32#
+      n# = intToInt8# i#
+  in case int8ToInt# n# ==# i# of
+    1# -> (# I8# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern A: signed narrowing, roundtrip at Int#
 toInt16# :: Int32 -> (# Int16 | (# #) #)
-toInt16# x = case toInt16 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt16# (I32# x32#) =
+  let i# = int32ToInt# x32#
+      n# = intToInt16# i#
+  in case int16ToInt# n# ==# i# of
+    1# -> (# I16# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Int32 always fits in Int (Int is at least 32 bits)
 toInt# :: Int32 -> (# Int | (# #) #)
-toInt# x = case toInt x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt# (I32# x32#) = (# I# (int32ToInt# x32#) | #)
 
+-- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord8# :: Int32 -> (# Word8 | (# #) #)
-toWord8# x = case toWord8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord8# (I32# x32#) =
+  let i# = int32ToInt# x32#
+      n# = wordToWord8# (int2Word# i#)
+  in case word2Int# (word8ToWord# n#) ==# i# of
+    1# -> (# W8# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord16# :: Int32 -> (# Word16 | (# #) #)
-toWord16# x = case toWord16 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord16# (I32# x32#) =
+  let i# = int32ToInt# x32#
+      n# = wordToWord16# (int2Word# i#)
+  in case word2Int# (word16ToWord# n#) ==# i# of
+    1# -> (# W16# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative
 toWord32# :: Int32 -> (# Word32 | (# #) #)
-toWord32# x = case toWord32 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord32# (I32# x32#) = case int32ToInt# x32# >=# 0# of
+  1# -> (# W32# (wordToWord32# (int2Word# (int32ToInt# x32#))) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative
 toWord64# :: Int32 -> (# Word64 | (# #) #)
-toWord64# x = case toWord64 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord64# (I32# x32#) = case int32ToInt# x32# >=# 0# of
+  1# -> (# W64# (wordToWord64# (int2Word# (int32ToInt# x32#))) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative
 toWord# :: Int32 -> (# Word | (# #) #)
-toWord# x = case toWord x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord# (I32# x32#) = case int32ToInt# x32# >=# 0# of
+  1# -> (# W# (int2Word# (int32ToInt# x32#)) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern H: check non-negative, construct NS directly
 toNatural# :: Int32 -> (# Overflows | Natural #)
-toNatural# x = case toNatural x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toNatural# (I32# x32#) = case int32ToInt# x32# >=# 0# of
+  1# -> (# | NS (int2Word# (int32ToInt# x32#)) #)
+  _  -> (# Underflow | #)
 
+-- | Pattern G: bounds-checked float conversion
 toFloat# :: Int32 -> (# Overflows | Float #)
-toFloat# x = case toFloat x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toFloat# (I32# x32#) =
+  let i# = int32ToInt# x32#
+  in case i# <# -16777215# of
+    1# -> (# Underflow | #)
+    _  -> case i# ># 16777215# of
+      1# -> (# Overflow | #)
+      _  -> (# | F# (int2Float# i#) #)

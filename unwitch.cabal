@@ -56,7 +56,8 @@ common common-options
     -fno-omit-yields
 
   build-depends:
-      base >=4.10.0.0 && <4.22.0,
+      base >=4.18.0.0 && <4.22.0,
+      ghc-bignum,
       bytestring >= 0.10 && < 0.13,
       text >= 1.2 && < 2.2
 

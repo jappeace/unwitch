@@ -28,6 +28,14 @@ import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
 import           Prelude hiding (toInteger)
+import           GHC.Exts (Word(..), int16ToInt#, intToInt8#, int8ToInt#,
+                           int2Word#, word2Int#,
+                           wordToWord8#, word8ToWord#,
+                           wordToWord16#, wordToWord32#, wordToWord64#,
+                           (==#), (>=#))
+import           GHC.Int (Int8(..), Int16(..))
+import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
+import           GHC.Num.Natural (Natural(NS))
 
 toInt8 :: Int16 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
@@ -70,37 +78,50 @@ toFloat = fromIntegral
 toDouble :: Int16 -> Double
 toDouble = fromIntegral
 
+-- | Pattern A: signed narrowing, roundtrip at Int#
 toInt8# :: Int16 -> (# Int8 | (# #) #)
-toInt8# x = case toInt8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt8# (I16# x16#) =
+  let i# = int16ToInt# x16#
+      n# = intToInt8# i#
+  in case int8ToInt# n# ==# i# of
+    1# -> (# I8# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord8# :: Int16 -> (# Word8 | (# #) #)
-toWord8# x = case toWord8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord8# (I16# x16#) =
+  let i# = int16ToInt# x16#
+      n# = wordToWord8# (int2Word# i#)
+  in case word2Int# (word8ToWord# n#) ==# i# of
+    1# -> (# W8# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative
 toWord16# :: Int16 -> (# Word16 | (# #) #)
-toWord16# x = case toWord16 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord16# (I16# x16#) = case int16ToInt# x16# >=# 0# of
+  1# -> (# W16# (wordToWord16# (int2Word# (int16ToInt# x16#))) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative
 toWord32# :: Int16 -> (# Word32 | (# #) #)
-toWord32# x = case toWord32 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord32# (I16# x16#) = case int16ToInt# x16# >=# 0# of
+  1# -> (# W32# (wordToWord32# (int2Word# (int16ToInt# x16#))) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative
 toWord64# :: Int16 -> (# Word64 | (# #) #)
-toWord64# x = case toWord64 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord64# (I16# x16#) = case int16ToInt# x16# >=# 0# of
+  1# -> (# W64# (wordToWord64# (int2Word# (int16ToInt# x16#))) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative
 toWord# :: Int16 -> (# Word | (# #) #)
-toWord# x = case toWord x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord# (I16# x16#) = case int16ToInt# x16# >=# 0# of
+  1# -> (# W# (int2Word# (int16ToInt# x16#)) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern H: check non-negative, construct NS directly
 toNatural# :: Int16 -> (# Overflows | Natural #)
-toNatural# x = case toNatural x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toNatural# (I16# x16#) = case int16ToInt# x16# >=# 0# of
+  1# -> (# | NS (int2Word# (int16ToInt# x16#)) #)
+  _  -> (# Underflow | #)

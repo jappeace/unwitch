@@ -34,6 +34,22 @@ import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
 import           Prelude hiding (toInteger)
+import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
+                           int64ToInt#, intToInt64#,
+                           intToInt8#, int8ToInt#,
+                           intToInt16#, int16ToInt#,
+                           intToInt32#, int32ToInt#,
+                           int2Word#, word2Int#,
+                           wordToWord8#, word8ToWord#,
+                           wordToWord16#, word16ToWord#,
+                           wordToWord32#, word32ToWord#,
+                           wordToWord64#,
+                           int2Float#, int2Double#,
+                           (<#), (>#),
+                           eqInt64#, geInt64#)
+import           GHC.Int (Int8(..), Int16(..), Int32(..), Int64(..))
+import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
+import           GHC.Num.Natural (Natural(NS))
 
 toInt8 :: Int64 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
@@ -82,62 +98,116 @@ toDouble x = if
   | x > maxIntegralRepDouble  -> Left Overflow
   | otherwise                 -> Right $ fromIntegral x
 
+-- | Pattern A via Int64# comparison: narrow through Int#, compare at Int64#
 toInt8# :: Int64 -> (# Int8 | (# #) #)
-toInt8# x = case toInt8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt8# (I64# x64#) =
+  let i# = int64ToInt# x64#
+      n# = intToInt8# i#
+  in case eqInt64# (intToInt64# (int8ToInt# n#)) x64# of
+    1# -> (# I8# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern A via Int64# comparison
 toInt16# :: Int64 -> (# Int16 | (# #) #)
-toInt16# x = case toInt16 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt16# (I64# x64#) =
+  let i# = int64ToInt# x64#
+      n# = intToInt16# i#
+  in case eqInt64# (intToInt64# (int16ToInt# n#)) x64# of
+    1# -> (# I16# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern A via Int64# comparison
 toInt32# :: Int64 -> (# Int32 | (# #) #)
-toInt32# x = case toInt32 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt32# (I64# x64#) =
+  let i# = int64ToInt# x64#
+      n# = intToInt32# i#
+  in case eqInt64# (intToInt64# (int32ToInt# n#)) x64# of
+    1# -> (# I32# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Roundtrip check at Int64# level for platform safety
 toInt# :: Int64 -> (# Int | (# #) #)
-toInt# x = case toInt x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt# (I64# x64#) =
+  let i# = int64ToInt# x64#
+  in case eqInt64# (intToInt64# i#) x64# of
+    1# -> (# I# i# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern C via Int64# comparison: signed->unsigned narrow
 toWord8# :: Int64 -> (# Word8 | (# #) #)
-toWord8# x = case toWord8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord8# (I64# x64#) =
+  let i# = int64ToInt# x64#
+      n# = wordToWord8# (int2Word# i#)
+  in case eqInt64# (intToInt64# (word2Int# (word8ToWord# n#))) x64# of
+    1# -> (# W8# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern C via Int64# comparison
 toWord16# :: Int64 -> (# Word16 | (# #) #)
-toWord16# x = case toWord16 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord16# (I64# x64#) =
+  let i# = int64ToInt# x64#
+      n# = wordToWord16# (int2Word# i#)
+  in case eqInt64# (intToInt64# (word2Int# (word16ToWord# n#))) x64# of
+    1# -> (# W16# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern C via Int64# comparison
 toWord32# :: Int64 -> (# Word32 | (# #) #)
-toWord32# x = case toWord32 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord32# (I64# x64#) =
+  let i# = int64ToInt# x64#
+      n# = wordToWord32# (int2Word# i#)
+  in case eqInt64# (intToInt64# (word2Int# (word32ToWord# n#))) x64# of
+    1# -> (# W32# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative at Int64# level
 toWord64# :: Int64 -> (# Word64 | (# #) #)
-toWord64# x = case toWord64 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord64# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
+  1# -> (# W64# (wordToWord64# (int2Word# (int64ToInt# x64#))) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern D: signed->unsigned, check non-negative at Int64# then roundtrip
 toWord# :: Int64 -> (# Word | (# #) #)
-toWord# x = case toWord x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
+  1# -> let i# = int64ToInt# x64#
+         in case eqInt64# (intToInt64# i#) x64# of
+           1# -> (# W# (int2Word# i#) | #)
+           _  -> (# | (# #) #)
+  _  -> (# | (# #) #)
 
+-- | Pattern H: check non-negative at Int64# level, construct NS
 toNatural# :: Int64 -> (# Overflows | Natural #)
-toNatural# x = case toNatural x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toNatural# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
+  1# -> let i# = int64ToInt# x64#
+         in case eqInt64# (intToInt64# i#) x64# of
+           1# -> (# | NS (int2Word# i#) #)
+           _  -> (# Overflow | #)
+  _  -> (# Underflow | #)
 
+-- | Pattern G: bounds-checked float conversion via Int#
 toFloat# :: Int64 -> (# Overflows | Float #)
-toFloat# x = case toFloat x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toFloat# (I64# x64#) =
+  let i# = int64ToInt# x64#
+  in case eqInt64# (intToInt64# i#) x64# of
+    1# -> case i# <# -16777215# of
+      1# -> (# Underflow | #)
+      _  -> case i# ># 16777215# of
+        1# -> (# Overflow | #)
+        _  -> (# | F# (int2Float# i#) #)
+    _  -> case geInt64# x64# (intToInt64# 0#) of
+      1# -> (# Overflow | #)
+      _  -> (# Underflow | #)
 
+-- | Pattern G: bounds-checked double conversion via Int#
 toDouble# :: Int64 -> (# Overflows | Double #)
-toDouble# x = case toDouble x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toDouble# (I64# x64#) =
+  let i# = int64ToInt# x64#
+  in case eqInt64# (intToInt64# i#) x64# of
+    1# -> case i# <# -9007199254740991# of
+      1# -> (# Underflow | #)
+      _  -> case i# ># 9007199254740991# of
+        1# -> (# Overflow | #)
+        _  -> (# | D# (int2Double# i#) #)
+    _  -> case geInt64# x64# (intToInt64# 0#) of
+      1# -> (# Overflow | #)
+      _  -> (# Underflow | #)

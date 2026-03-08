@@ -32,6 +32,17 @@ import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
 import           Prelude hiding (toInteger)
+import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
+                           wordToWord8#, word8ToWord#,
+                           wordToWord16#, word16ToWord#,
+                           wordToWord32#, word32ToWord#,
+                           word2Int#,
+                           intToInt8#, intToInt16#, intToInt32#,
+                           intToInt64#,
+                           int2Float#, int2Double#,
+                           eqWord#, leWord#, (>=#))
+import           GHC.Int (Int8(..), Int16(..), Int32(..), Int64(..))
+import           GHC.Word (Word8(..), Word16(..), Word32(..))
 
 toWord8 :: Word -> Maybe Word8
 toWord8 = Bits.toIntegralSized
@@ -76,52 +87,72 @@ toDouble x = if
   | fromIntegral x > (maxIntegralRepDouble :: Integer) -> Left Overflow
   | otherwise                                          -> Right $ fromIntegral x
 
+-- | Pattern B: unsigned narrowing, roundtrip at Word#
 toWord8# :: Word -> (# Word8 | (# #) #)
-toWord8# x = case toWord8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord8# (W# w#) =
+  let n# = wordToWord8# w#
+  in case word8ToWord# n# `eqWord#` w# of
+    1# -> (# W8# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern B: unsigned narrowing, roundtrip at Word#
 toWord16# :: Word -> (# Word16 | (# #) #)
-toWord16# x = case toWord16 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord16# (W# w#) =
+  let n# = wordToWord16# w#
+  in case word16ToWord# n# `eqWord#` w# of
+    1# -> (# W16# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern B: unsigned narrowing, roundtrip at Word#
 toWord32# :: Word -> (# Word32 | (# #) #)
-toWord32# x = case toWord32 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toWord32# (W# w#) =
+  let n# = wordToWord32# w#
+  in case word32ToWord# n# `eqWord#` w# of
+    1# -> (# W32# n# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern F: Word -> IntN, check upper bound
 toInt8# :: Word -> (# Int8 | (# #) #)
-toInt8# x = case toInt8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt8# (W# w#) = case leWord# w# 127## of
+  1# -> (# I8# (intToInt8# (word2Int# w#)) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern F: Word -> IntN, check upper bound
 toInt16# :: Word -> (# Int16 | (# #) #)
-toInt16# x = case toInt16 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt16# (W# w#) = case leWord# w# 32767## of
+  1# -> (# I16# (intToInt16# (word2Int# w#)) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern F: Word -> IntN, check upper bound
 toInt32# :: Word -> (# Int32 | (# #) #)
-toInt32# x = case toInt32 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt32# (W# w#) = case leWord# w# 2147483647## of
+  1# -> (# I32# (intToInt32# (word2Int# w#)) | #)
+  _  -> (# | (# #) #)
 
+-- | Pattern F: Word -> Int64, check high bit not set
 toInt64# :: Word -> (# Int64 | (# #) #)
-toInt64# x = case toInt64 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt64# (W# w#) =
+  let i# = word2Int# w#
+  in case i# >=# 0# of
+    1# -> (# I64# (intToInt64# i#) | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern F: Word -> Int, check high bit not set
 toInt# :: Word -> (# Int | (# #) #)
-toInt# x = case toInt x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt# (W# w#) =
+  let i# = word2Int# w#
+  in case i# >=# 0# of
+    1# -> (# I# i# | #)
+    _  -> (# | (# #) #)
 
+-- | Pattern G: bounds-checked float conversion
 toFloat# :: Word -> (# Overflows | Float #)
-toFloat# x = case toFloat x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toFloat# (W# w#) = case leWord# w# 16777215## of
+  1# -> (# | F# (int2Float# (word2Int# w#)) #)
+  _  -> (# Overflow | #)
 
+-- | Pattern G: bounds-checked double conversion
 toDouble# :: Word -> (# Overflows | Double #)
-toDouble# x = case toDouble x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
+toDouble# (W# w#) = case leWord# w# 9007199254740991## of
+  1# -> (# | D# (int2Double# (word2Int# w#)) #)
+  _  -> (# Overflow | #)

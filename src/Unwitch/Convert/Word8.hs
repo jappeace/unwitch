@@ -21,6 +21,10 @@ import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
 import           Prelude hiding (toInteger)
+import           GHC.Exts (word8ToWord#, word2Int#, intToInt8#, int8ToInt#,
+                           (==#))
+import           GHC.Int (Int8(..))
+import           GHC.Word (Word8(..))
 
 toWord16 :: Word8 -> Word16
 toWord16 = fromIntegral
@@ -61,7 +65,11 @@ toFloat = fromIntegral
 toDouble :: Word8 -> Double
 toDouble = fromIntegral
 
+-- | Pattern E: unsigned->signed, source fits in Int#, roundtrip at Int#
 toInt8# :: Word8 -> (# Int8 | (# #) #)
-toInt8# x = case toInt8 x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
+toInt8# (W8# w8#) =
+  let i# = word2Int# (word8ToWord# w8#)
+      n# = intToInt8# i#
+  in case int8ToInt# n# ==# i# of
+    1# -> (# I8# n# | #)
+    _  -> (# | (# #) #)
