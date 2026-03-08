@@ -36,3 +36,12 @@ spec = describe "Unwitch.Convert.Fixed" $ do
       -- that exists in E6 but not in E2:
       -- 1.123 in E6 -> 1.12 in E2 loses precision
       Fixed.toFixed (1.123000 :: Fixed E6) `shouldBe` (Nothing :: Maybe (Fixed E2))
+
+  describe "toDouble" $ do
+    it "converts whole Fixed to Double" $
+      Fixed.toDouble (42.0 :: Fixed E2) `shouldBe` 42.0
+    it "converts fractional Fixed to Double" $
+      Fixed.toDouble (1.50 :: Fixed E2) `shouldBe` 1.5
+    it "converts zero" $
+      Fixed.toDouble (0.0 :: Fixed E6) `shouldBe` 0.0
+

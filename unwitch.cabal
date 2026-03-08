@@ -1,8 +1,8 @@
 cabal-version:      3.0
 
 name:           unwitch
-version:        1.0.0
-homepage:       https://github.com/jappeace/haskell-unwitch-project#readme
+version:        2.0.0
+homepage:       https://github.com/jappeace/unwitch#readme
 synopsis:  converts between primitives
 description: 
   Removes the magic from witch.
@@ -17,10 +17,10 @@ description:
   3. No trouble with orphans.
   4. Custom errors instead of the prelude based ones allow client
     code to recover with typesafety even on partial conversions.
-bug-reports:    https://github.com/jappeace/haskell-unwitch-project/issues
+bug-reports:    https://github.com/jappeace/unwitch/issues
 author:         Jappie Klooster
 maintainer:     jappieklooster@hotmail.com
-copyright:      2020 Jappie Klooster
+copyright:      2026 Jappie Klooster
 license:        MIT
 category: Data
 license-file:   LICENSE
@@ -33,7 +33,7 @@ extra-doc-files:
 
 source-repository head
   type: git
-  location: https://github.com/jappeace/haskell-unwitch-project
+  location: https://github.com/jappeace/unwitch
 
 common common-options
   default-extensions:
@@ -83,7 +83,6 @@ library
   exposed-modules:
       Unwitch.Convert.ByteString
       Unwitch.Convert.Char
-      Unwitch.Convert.Complex
       Unwitch.Convert.Double
       Unwitch.Convert.Fixed
       Unwitch.Convert.Float
@@ -138,7 +137,6 @@ test-suite unit
       Test.Convert.PropertySpec
       Test.Convert.RatioSpec
       Test.Convert.FixedSpec
-      Test.Convert.ComplexSpec
       Test.Convert.CharSpec
       Test.Convert.ShortByteStringSpec
       Test.Convert.TextSpec

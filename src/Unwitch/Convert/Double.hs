@@ -1,5 +1,6 @@
 module Unwitch.Convert.Double
   ( toFloat
+  , toFixed
   , toRational
   , toInteger
   , toInt8
@@ -20,6 +21,7 @@ module Unwitch.Convert.Double
 where
 
 import           Data.Bifunctor(first)
+import           Data.Fixed (Fixed, HasResolution)
 import           Unwitch.Constant
 import qualified GHC.Float as F
 import           Unwitch.Convert.Ratio(unwrapIfDenominatorOne)
@@ -34,6 +36,12 @@ import Numeric.Natural (Natural)
 -- loses precision?!
 toFloat :: Double -> Float
 toFloat = F.double2Float
+
+-- | Converts a Double to a Fixed value. Rejects NaN and infinities.
+toFixed :: (HasResolution a) => Double -> Either RationalErrors (Fixed a)
+toFixed double = do
+  r <- toRational double
+  Right $ Prelude.fromRational r
 
 data IntegerErrors = IntegerFlow Integer Overflows
                    | RationalConversion RationalErrors

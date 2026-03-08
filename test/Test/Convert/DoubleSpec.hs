@@ -1,6 +1,7 @@
 module Test.Convert.DoubleSpec (spec) where
 
 import Test.Hspec
+import Data.Fixed (Fixed, E2, E6)
 import Data.Int
 import Data.Word
 import Numeric.Natural (Natural)
@@ -81,6 +82,16 @@ spec = describe "Unwitch.Convert.Double" $ do
       Double.toNatural (-1.0) `shouldSatisfy` isLeft
     it "rejects fractional" $
       Double.toNatural 1.5 `shouldSatisfy` isLeft
+
+  describe "toFixed" $ do
+    it "converts finite Double to Fixed" $
+      Double.toFixed 1.5 `shouldBe` Right (1.50 :: Fixed E2)
+    it "converts zero" $
+      Double.toFixed 0.0 `shouldBe` Right (0.0 :: Fixed E6)
+    it "rejects NaN" $
+      Double.toFixed (0 / 0 :: Double) `shouldSatisfy` (isLeft :: Either Double.RationalErrors (Fixed E2) -> Bool)
+    it "rejects Infinity" $
+      Double.toFixed (1 / 0 :: Double) `shouldBe` (Left (Double.IsInf Overflow) :: Either Double.RationalErrors (Fixed E2))
 
 isLeft :: Either a b -> Bool
 isLeft (Left _) = True
