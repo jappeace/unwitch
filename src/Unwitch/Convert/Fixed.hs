@@ -1,10 +1,8 @@
 module Unwitch.Convert.Fixed
   ( fromInteger
   , toInteger
-  , toInteger#
   , toRational
   , toFixed
-  , toFixed#
   )
 where
 
@@ -26,12 +24,6 @@ toInteger fixed =
      then Just $ numerator r
      else Nothing
 
--- | Unboxed variant of 'toInteger'.
-toInteger# :: (HasResolution a) => Fixed a -> (# Integer | (# #) #)
-toInteger# x = case toInteger x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
-
 -- | Converts a Fixed value to Rational. Infallible, exact.
 toRational :: (HasResolution a) => Fixed a -> Rational
 toRational = Prelude.toRational
@@ -46,8 +38,3 @@ toFixed source =
      then Just target
      else Nothing
 
--- | Unboxed variant of 'toFixed'.
-toFixed# :: (HasResolution a, HasResolution b) => Fixed a -> (# Fixed b | (# #) #)
-toFixed# x = case toFixed x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)

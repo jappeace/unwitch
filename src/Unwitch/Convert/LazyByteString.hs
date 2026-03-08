@@ -8,11 +8,6 @@ module Unwitch.Convert.LazyByteString
   , toLazyTextUtf16BE
   , toLazyTextUtf32LE
   , toLazyTextUtf32BE
-  , toLazyTextUtf8#
-  , toLazyTextUtf16LE#
-  , toLazyTextUtf16BE#
-  , toLazyTextUtf32LE#
-  , toLazyTextUtf32BE#
   )
 where
 
@@ -51,27 +46,3 @@ toLazyTextUtf32LE = tryEvaluate . LTE.decodeUtf32LE
 toLazyTextUtf32BE :: LBS.ByteString -> Either UnicodeException LT.Text
 toLazyTextUtf32BE = tryEvaluate . LTE.decodeUtf32BE
 
-toLazyTextUtf8# :: LBS.ByteString -> (# UnicodeException | LT.Text #)
-toLazyTextUtf8# x = case toLazyTextUtf8 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toLazyTextUtf16LE# :: LBS.ByteString -> (# UnicodeException | LT.Text #)
-toLazyTextUtf16LE# x = case toLazyTextUtf16LE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toLazyTextUtf16BE# :: LBS.ByteString -> (# UnicodeException | LT.Text #)
-toLazyTextUtf16BE# x = case toLazyTextUtf16BE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toLazyTextUtf32LE# :: LBS.ByteString -> (# UnicodeException | LT.Text #)
-toLazyTextUtf32LE# x = case toLazyTextUtf32LE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toLazyTextUtf32BE# :: LBS.ByteString -> (# UnicodeException | LT.Text #)
-toLazyTextUtf32BE# x = case toLazyTextUtf32BE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)

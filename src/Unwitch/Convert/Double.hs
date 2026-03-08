@@ -1,31 +1,18 @@
 module Unwitch.Convert.Double
   ( toFloat
   , toRational
-  , toRational#
   , toInteger
-  , toInteger#
   , toInt8
-  , toInt8#
   , toInt16
-  , toInt16#
   , toInt32
-  , toInt32#
   , toInt64
-  , toInt64#
   , toInt
-  , toInt#
   , toWord8
-  , toWord8#
   , toWord16
-  , toWord16#
   , toWord32
-  , toWord32#
   , toWord64
-  , toWord64#
   , toWord
-  , toWord#
   , toNatural
-  , toNatural#
   , ViaIntegerErrors(..)
   , IntegerErrors(..)
   , RationalErrors(..)
@@ -121,67 +108,3 @@ toRational double = if
       | otherwise  -> Left $ IsInf Underflow
   | True              -> Right $ Prelude.toRational double
 
-toRational# :: Double -> (# RationalErrors | Rational #)
-toRational# x = case toRational x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toInteger# :: Double -> (# IntegerErrors | Integer #)
-toInteger# x = case toInteger x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toInt8# :: Double -> (# ViaIntegerErrors | Int8 #)
-toInt8# x = case toInt8 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toInt16# :: Double -> (# ViaIntegerErrors | Int16 #)
-toInt16# x = case toInt16 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toInt32# :: Double -> (# ViaIntegerErrors | Int32 #)
-toInt32# x = case toInt32 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toInt64# :: Double -> (# ViaIntegerErrors | Int64 #)
-toInt64# x = case toInt64 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toInt# :: Double -> (# ViaIntegerErrors | Int #)
-toInt# x = case toInt x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toWord8# :: Double -> (# ViaIntegerErrors | Word8 #)
-toWord8# x = case toWord8 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toWord16# :: Double -> (# ViaIntegerErrors | Word16 #)
-toWord16# x = case toWord16 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toWord32# :: Double -> (# ViaIntegerErrors | Word32 #)
-toWord32# x = case toWord32 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toWord64# :: Double -> (# ViaIntegerErrors | Word64 #)
-toWord64# x = case toWord64 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toWord# :: Double -> (# ViaIntegerErrors | Word #)
-toWord# x = case toWord x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toNatural# :: Double -> (# ViaIntegerErrors | Natural #)
-toNatural# x = case toNatural x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)

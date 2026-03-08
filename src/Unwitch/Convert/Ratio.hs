@@ -1,6 +1,5 @@
 module Unwitch.Convert.Ratio
   ( unwrapIfDenominatorOne
-  , unwrapIfDenominatorOne#
   , fromIntegralToRatio
   , toFloat
   , toDouble
@@ -15,11 +14,6 @@ unwrapIfDenominatorOne :: (Eq a, Num a) => Ratio a -> Maybe a
 unwrapIfDenominatorOne s = if Ratio.denominator s == 1 then
   Just $ Ratio.numerator s
   else Nothing
-
-unwrapIfDenominatorOne# :: (Eq a, Num a) => Ratio a -> (# a | (# #) #)
-unwrapIfDenominatorOne# x = case unwrapIfDenominatorOne x of
-  Just y  -> (# y | #)
-  Nothing -> (# | (# #) #)
 
 -- | Wraps an integral value as a Ratio with denominator 1.
 fromIntegralToRatio :: (Integral a) => a -> Ratio a

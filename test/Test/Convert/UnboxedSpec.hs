@@ -8,9 +8,6 @@ import Test.Hspec
 import Test.Hspec.QuickCheck (prop)
 
 import qualified Unwitch.Convert.Integer as Integer
-import qualified Unwitch.Convert.Double as Double
-import qualified Unwitch.Convert.Float as Float
-import qualified Unwitch.Convert.Ratio as Ratio
 import qualified Unwitch.Convert.Int as Int
 import qualified Unwitch.Convert.Int8 as Int8
 import qualified Unwitch.Convert.Int16 as Int16
@@ -23,21 +20,7 @@ import qualified Unwitch.Convert.Word32 as Word32
 import qualified Unwitch.Convert.Word64 as Word64
 import qualified Unwitch.Convert.Natural as Natural
 import qualified Unwitch.Convert.Char as Char
-import qualified Unwitch.Convert.Complex as Complex
-import qualified Unwitch.Convert.Fixed as Fixed
-import qualified Unwitch.Convert.Text as Text
-import qualified Unwitch.Convert.LazyText as LazyText
-import qualified Unwitch.Convert.ByteString as ByteString
-import qualified Unwitch.Convert.LazyByteString as LazyByteString
-
-import Data.ByteString qualified as BS
-import Data.ByteString.Lazy qualified as LBS
-import Data.Complex (Complex((:+)))
-import Data.Fixed (Pico)
 import Data.Int
-import Data.Ratio ((%))
-import Data.Text qualified as T
-import Data.Text.Lazy qualified as LT
 import Data.Word
 import Numeric.Natural (Natural)
 
@@ -54,35 +37,6 @@ spec = describe "Unboxed sum variants" $ do
       case Integer.toDouble# x of
         (# e | #) -> Integer.toDouble x `shouldBe` Left e
         (# | y #) -> Integer.toDouble x `shouldBe` Right y
-
-  describe "Double" $ do
-    prop "toInt8# agrees with toInt8" $ \(x :: Double) ->
-      case Double.toInt8# x of
-        (# e | #) -> Double.toInt8 x `shouldBe` Left e
-        (# | y #) -> Double.toInt8 x `shouldBe` Right y
-
-    prop "toRational# agrees with toRational" $ \(x :: Double) ->
-      case Double.toRational# x of
-        (# e | #) -> Double.toRational x `shouldBe` Left e
-        (# | y #) -> Double.toRational x `shouldBe` Right y
-
-    prop "toInteger# agrees with toInteger" $ \(x :: Double) ->
-      case Double.toInteger# x of
-        (# e | #) -> Double.toInteger x `shouldBe` Left e
-        (# | y #) -> Double.toInteger x `shouldBe` Right y
-
-  describe "Float" $ do
-    prop "toInt8# agrees with toInt8" $ \(x :: Float) ->
-      case Float.toInt8# x of
-        (# e | #) -> Float.toInt8 x `shouldBe` Left e
-        (# | y #) -> Float.toInt8 x `shouldBe` Right y
-
-  describe "Ratio" $ do
-    prop "unwrapIfDenominatorOne# agrees with unwrapIfDenominatorOne" $ \(n :: Integer) (d :: Integer) ->
-      let r = if d == 0 then n % 1 else n % d
-      in case Ratio.unwrapIfDenominatorOne# r of
-        (# y | #)      -> Ratio.unwrapIfDenominatorOne r `shouldBe` Just y
-        (# | (# #) #)  -> Ratio.unwrapIfDenominatorOne r `shouldBe` Nothing
 
   describe "Int" $ do
     prop "toInt8# agrees with toInt8" $ \(x :: Int) ->
@@ -198,44 +152,3 @@ spec = describe "Unboxed sum variants" $ do
         (# y | #)      -> Char.fromInt x `shouldBe` Just y
         (# | (# #) #)  -> Char.fromInt x `shouldBe` Nothing
 
-  describe "Complex" $ do
-    prop "toReal# agrees with toReal" $ \(r :: Double) (i :: Double) ->
-      let c = r :+ i
-      in case Complex.toReal# c of
-        (# y | #)      -> Complex.toReal c `shouldBe` Just y
-        (# | (# #) #)  -> Complex.toReal c `shouldBe` Nothing
-
-  describe "Fixed" $ do
-    prop "toInteger# agrees with toInteger" $ \(x :: Integer) ->
-      let fixed = fromInteger x :: Pico
-      in case Fixed.toInteger# fixed of
-        (# y | #)      -> Fixed.toInteger fixed `shouldBe` Just y
-        (# | (# #) #)  -> Fixed.toInteger fixed `shouldBe` Nothing
-
-  describe "Text" $ do
-    prop "toByteStringLatin1# agrees with toByteStringLatin1" $ \(s :: String) ->
-      let t = T.pack s
-      in case Text.toByteStringLatin1# t of
-        (# y | #)      -> Text.toByteStringLatin1 t `shouldBe` Just y
-        (# | (# #) #)  -> Text.toByteStringLatin1 t `shouldBe` Nothing
-
-  describe "LazyText" $ do
-    prop "toLazyByteStringLatin1# agrees with toLazyByteStringLatin1" $ \(s :: String) ->
-      let t = LT.pack s
-      in case LazyText.toLazyByteStringLatin1# t of
-        (# y | #)      -> LazyText.toLazyByteStringLatin1 t `shouldBe` Just y
-        (# | (# #) #)  -> LazyText.toLazyByteStringLatin1 t `shouldBe` Nothing
-
-  describe "ByteString" $ do
-    prop "toTextUtf8# agrees with toTextUtf8" $ \(ws :: [Word8]) ->
-      let bs = BS.pack ws
-      in case ByteString.toTextUtf8# bs of
-        (# e | #) -> ByteString.toTextUtf8 bs `shouldBe` Left e
-        (# | y #) -> ByteString.toTextUtf8 bs `shouldBe` Right y
-
-  describe "LazyByteString" $ do
-    prop "toLazyTextUtf8# agrees with toLazyTextUtf8" $ \(ws :: [Word8]) ->
-      let bs = LBS.pack ws
-      in case LazyByteString.toLazyTextUtf8# bs of
-        (# e | #) -> LazyByteString.toLazyTextUtf8 bs `shouldBe` Left e
-        (# | y #) -> LazyByteString.toLazyTextUtf8 bs `shouldBe` Right y

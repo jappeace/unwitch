@@ -5,15 +5,10 @@ module Unwitch.Convert.ByteString
   , fromWord8s
   , toTextLatin1
   , toTextUtf8
-  , toTextUtf8#
   , toTextUtf16LE
-  , toTextUtf16LE#
   , toTextUtf16BE
-  , toTextUtf16BE#
   , toTextUtf32LE
-  , toTextUtf32LE#
   , toTextUtf32BE
-  , toTextUtf32BE#
   )
 where
 
@@ -58,27 +53,3 @@ toTextUtf32LE = tryEvaluate . TE.decodeUtf32LE
 toTextUtf32BE :: ByteString -> Either UnicodeException Text
 toTextUtf32BE = tryEvaluate . TE.decodeUtf32BE
 
-toTextUtf8# :: ByteString -> (# UnicodeException | Text #)
-toTextUtf8# x = case toTextUtf8 x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toTextUtf16LE# :: ByteString -> (# UnicodeException | Text #)
-toTextUtf16LE# x = case toTextUtf16LE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toTextUtf16BE# :: ByteString -> (# UnicodeException | Text #)
-toTextUtf16BE# x = case toTextUtf16BE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toTextUtf32LE# :: ByteString -> (# UnicodeException | Text #)
-toTextUtf32LE# x = case toTextUtf32LE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
-
-toTextUtf32BE# :: ByteString -> (# UnicodeException | Text #)
-toTextUtf32BE# x = case toTextUtf32BE x of
-  Left e  -> (# e | #)
-  Right y -> (# | y #)
