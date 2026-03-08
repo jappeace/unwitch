@@ -3,6 +3,7 @@ module Unwitch.Convert.Fixed
   , toInteger
   , toRational
   , toFixed
+  , toDouble
   )
 where
 
@@ -37,4 +38,10 @@ toFixed source =
   in if Prelude.toRational target == r
      then Just target
      else Nothing
+
+-- | Converts a Fixed value to Double. Infallible, but may lose precision
+-- for values that cannot be exactly represented as a Double.
+toDouble :: (HasResolution a) => Fixed a -> Double
+toDouble = Prelude.fromRational . Prelude.toRational
+
 
