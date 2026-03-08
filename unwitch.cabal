@@ -3,11 +3,26 @@ cabal-version:      3.0
 name:           unwitch
 version:        1.0.0
 homepage:       https://github.com/jappeace/haskell-unwitch-project#readme
+synopsis:  converts between primitives
+description: 
+  Removes the magic from witch.
+  This provides safe conversions like witch does.
+  But it [doesn't](https://jappie.me/death-to-type-classes.html) use [type classes](https://www.haskellforall.com/2012/05/scrap-your-type-classes.html)
+  or exceptions.
+  This has a couple of advantages:
+
+  1. No need to use type application for function selection.
+  2. Functions get names that describe what they do.
+    This allows ctags to work as well.
+  3. No trouble with orphans.
+  4. Custom errors instead of the prelude based ones allow client
+    code to recover with typesafety even on partial conversions.
 bug-reports:    https://github.com/jappeace/haskell-unwitch-project/issues
 author:         Jappie Klooster
 maintainer:     jappieklooster@hotmail.com
 copyright:      2020 Jappie Klooster
 license:        MIT
+category: Data
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
@@ -48,7 +63,7 @@ common common-options
       MagicHash
 
   ghc-options:
-    -O2 -Wall -Werror -Wincomplete-uni-patterns
+    -Wall -Wincomplete-uni-patterns
     -Wincomplete-record-updates -Widentities -Wredundant-constraints
     -Wcpp-undef -fwarn-tabs -Wpartial-fields
     -fdefer-diagnostics -Wunused-packages
@@ -56,8 +71,8 @@ common common-options
     -fno-omit-yields
 
   build-depends:
-      base >=4.18.0.0 && <4.22.0,
-      ghc-bignum,
+      base >=4.18.0.0 && <4.23,
+      ghc-bignum < 2,
       bytestring >= 0.10 && < 0.13,
       text >= 1.2 && < 2.2
 
@@ -128,7 +143,6 @@ test-suite unit
       Test.Convert.ShortByteStringSpec
       Test.Convert.TextSpec
       Test.Convert.UnboxedSpec
-      Paths_unwitch
   hs-source-dirs:
       test
   build-depends:

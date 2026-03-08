@@ -6,7 +6,7 @@
 
 Removes the magic from witch.
 This provides safe conversions like witch does.
-But it [doesn't use type classes](https://www.haskellforall.com/2012/05/scrap-your-type-classes.html)
+But it [doesn't](https://jappie.me/death-to-type-classes.html) use [type classes](https://www.haskellforall.com/2012/05/scrap-your-type-classes.html)
 or exceptions.
 This has a couple of advantages:
 
