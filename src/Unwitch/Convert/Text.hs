@@ -8,6 +8,7 @@ module Unwitch.Convert.Text
   , toByteStringUtf32LE
   , toByteStringUtf32BE
   , toByteStringLatin1
+  , toByteStringLatin1#
   )
 where
 
@@ -49,3 +50,8 @@ toByteStringLatin1 t = if T.all isLatin1 t
 
 isLatin1 :: Char -> Bool
 isLatin1 c = c <= '\xFF'
+
+toByteStringLatin1# :: Text -> (# ByteString | (# #) #)
+toByteStringLatin1# t = case toByteStringLatin1 t of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)

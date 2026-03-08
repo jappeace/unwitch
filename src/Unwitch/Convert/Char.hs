@@ -3,6 +3,8 @@ module Unwitch.Convert.Char
   , toWord
   , fromInt
   , fromWord
+  , fromInt#
+  , fromWord#
   )
 where
 
@@ -23,12 +25,24 @@ fromInt i = if isValidCodepoint (fromIntegral i)
   then Just $ chr i
   else Nothing
 
+-- | Unboxed variant of 'fromInt'.
+fromInt# :: Int -> (# Char | (# #) #)
+fromInt# x = case fromInt x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
 -- | Converts a Word to a Char if it is a valid Unicode codepoint.
 -- Valid range: 0..0xD7FF and 0xE000..0x10FFFF (excludes surrogates).
 fromWord :: Word -> Maybe Char
 fromWord w = if isValidCodepoint (fromIntegral w)
   then Just $ chr (fromIntegral w)
   else Nothing
+
+-- | Unboxed variant of 'fromWord'.
+fromWord# :: Word -> (# Char | (# #) #)
+fromWord# x = case fromWord x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
 
 isValidCodepoint :: Integer -> Bool
 isValidCodepoint cp =

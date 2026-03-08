@@ -1,6 +1,7 @@
 module Unwitch.Convert.Complex
   ( fromReal
   , toReal
+  , toReal#
   )
 where
 
@@ -15,3 +16,9 @@ toReal :: (Eq a, Num a) => Complex a -> Maybe a
 toReal c = if imagPart c == 0
   then Just $ realPart c
   else Nothing
+
+-- | Unboxed variant of 'toReal'.
+toReal# :: (Eq a, Num a) => Complex a -> (# a | (# #) #)
+toReal# x = case toReal x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)

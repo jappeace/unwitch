@@ -43,6 +43,9 @@ common common-options
       TypeApplications
       NumericUnderscores
       ImportQualifiedPost
+      UnboxedSums
+      UnboxedTuples
+      MagicHash
 
   ghc-options:
     -O2 -Wall -Werror -Wincomplete-uni-patterns
@@ -53,7 +56,7 @@ common common-options
     -fno-omit-yields
 
   build-depends:
-      base >=4.9.1.0 && <4.22.0,
+      base >=4.10.0.0 && <4.22.0,
       bytestring >= 0.10 && < 0.13,
       text >= 1.2 && < 2.2
 
@@ -123,6 +126,7 @@ test-suite unit
       Test.Convert.CharSpec
       Test.Convert.ShortByteStringSpec
       Test.Convert.TextSpec
+      Test.Convert.UnboxedSpec
       Paths_unwitch
   hs-source-dirs:
       test

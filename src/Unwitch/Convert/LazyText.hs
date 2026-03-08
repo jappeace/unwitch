@@ -8,6 +8,7 @@ module Unwitch.Convert.LazyText
   , toLazyByteStringUtf32LE
   , toLazyByteStringUtf32BE
   , toLazyByteStringLatin1
+  , toLazyByteStringLatin1#
   )
 where
 
@@ -45,6 +46,11 @@ toLazyByteStringLatin1 :: LT.Text -> Maybe LBS.ByteString
 toLazyByteStringLatin1 t = if LT.all isLatin1 t
   then Just $ LBSC8.pack (LT.unpack t)
   else Nothing
+
+toLazyByteStringLatin1# :: LT.Text -> (# LBS.ByteString | (# #) #)
+toLazyByteStringLatin1# x = case toLazyByteStringLatin1 x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
 
 isLatin1 :: Char -> Bool
 isLatin1 c = c <= '\xFF'

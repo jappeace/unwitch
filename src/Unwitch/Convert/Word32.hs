@@ -12,6 +12,14 @@ module Unwitch.Convert.Word32
   , toInteger
   , toFloat
   , toDouble
+  , toWord8#
+  , toWord16#
+  , toWord#
+  , toInt8#
+  , toInt16#
+  , toInt32#
+  , toInt#
+  , toFloat#
   )
 where
 
@@ -63,3 +71,43 @@ toFloat x = if
 
 toDouble :: Word32 -> Double
 toDouble = fromIntegral
+
+toWord8# :: Word32 -> (# Word8 | (# #) #)
+toWord8# x = case toWord8 x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
+toWord16# :: Word32 -> (# Word16 | (# #) #)
+toWord16# x = case toWord16 x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
+toWord# :: Word32 -> (# Word | (# #) #)
+toWord# x = case toWord x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
+toInt8# :: Word32 -> (# Int8 | (# #) #)
+toInt8# x = case toInt8 x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
+toInt16# :: Word32 -> (# Int16 | (# #) #)
+toInt16# x = case toInt16 x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
+toInt32# :: Word32 -> (# Int32 | (# #) #)
+toInt32# x = case toInt32 x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
+toInt# :: Word32 -> (# Int | (# #) #)
+toInt# x = case toInt x of
+  Just y  -> (# y | #)
+  Nothing -> (# | (# #) #)
+
+toFloat# :: Word32 -> (# Overflows | Float #)
+toFloat# x = case toFloat x of
+  Left e  -> (# e | #)
+  Right y -> (# | y #)
