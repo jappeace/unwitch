@@ -89,7 +89,7 @@ toFloat x = if
 toDouble :: Int32 -> Double
 toDouble = fromIntegral
 
--- | Pattern A: signed narrowing, roundtrip at Int#
+-- | Signed narrowing, roundtrip at Int#
 toInt8# :: Int32 -> (# Int8 | (# #) #)
 toInt8# (I32# x32#) =
   let i# = int32ToInt# x32#
@@ -98,7 +98,7 @@ toInt8# (I32# x32#) =
     1# -> (# I8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern A: signed narrowing, roundtrip at Int#
+-- | Signed narrowing, roundtrip at Int#
 toInt16# :: Int32 -> (# Int16 | (# #) #)
 toInt16# (I32# x32#) =
   let i# = int32ToInt# x32#
@@ -111,7 +111,7 @@ toInt16# (I32# x32#) =
 toInt# :: Int32 -> (# Int | (# #) #)
 toInt# (I32# x32#) = (# I# (int32ToInt# x32#) | #)
 
--- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
+-- | Signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord8# :: Int32 -> (# Word8 | (# #) #)
 toWord8# (I32# x32#) =
   let i# = int32ToInt# x32#
@@ -120,7 +120,7 @@ toWord8# (I32# x32#) =
     1# -> (# W8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
+-- | Signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord16# :: Int32 -> (# Word16 | (# #) #)
 toWord16# (I32# x32#) =
   let i# = int32ToInt# x32#
@@ -129,31 +129,31 @@ toWord16# (I32# x32#) =
     1# -> (# W16# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord32# :: Int32 -> (# Word32 | (# #) #)
 toWord32# (I32# x32#) = case int32ToInt# x32# >=# 0# of
   1# -> (# W32# (wordToWord32# (int2Word# (int32ToInt# x32#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord64# :: Int32 -> (# Word64 | (# #) #)
 toWord64# (I32# x32#) = case int32ToInt# x32# >=# 0# of
   1# -> (# W64# (wordToWord64# (int2Word# (int32ToInt# x32#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord# :: Int32 -> (# Word | (# #) #)
 toWord# (I32# x32#) = case int32ToInt# x32# >=# 0# of
   1# -> (# W# (int2Word# (int32ToInt# x32#)) | #)
   _  -> (# | (# #) #)
 
--- | Pattern H: check non-negative, construct NS directly
+-- | Check non-negative, construct NS directly
 toNatural# :: Int32 -> (# Overflows | Natural #)
 toNatural# (I32# x32#) = case int32ToInt# x32# >=# 0# of
   1# -> (# | NS (int2Word# (int32ToInt# x32#)) #)
   _  -> (# Underflow | #)
 
--- | Pattern G: bounds-checked float conversion
+-- | Bounds-checked float conversion
 toFloat# :: Int32 -> (# Overflows | Float #)
 toFloat# (I32# x32#) =
   let i# = int32ToInt# x32#

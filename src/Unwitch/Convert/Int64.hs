@@ -98,7 +98,7 @@ toDouble x = if
   | x > maxIntegralRepDouble  -> Left Overflow
   | otherwise                 -> Right $ fromIntegral x
 
--- | Pattern A via Int64# comparison: narrow through Int#, compare at Int64#
+-- | Narrow through Int#, compare at Int64#
 toInt8# :: Int64 -> (# Int8 | (# #) #)
 toInt8# (I64# x64#) =
   let i# = int64ToInt# x64#
@@ -107,7 +107,7 @@ toInt8# (I64# x64#) =
     1# -> (# I8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern A via Int64# comparison
+-- | Signed narrowing via Int64# comparison
 toInt16# :: Int64 -> (# Int16 | (# #) #)
 toInt16# (I64# x64#) =
   let i# = int64ToInt# x64#
@@ -116,7 +116,7 @@ toInt16# (I64# x64#) =
     1# -> (# I16# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern A via Int64# comparison
+-- | Signed narrowing via Int64# comparison
 toInt32# :: Int64 -> (# Int32 | (# #) #)
 toInt32# (I64# x64#) =
   let i# = int64ToInt# x64#
@@ -133,7 +133,7 @@ toInt# (I64# x64#) =
     1# -> (# I# i# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C via Int64# comparison: signed->unsigned narrow
+-- | Signed->unsigned narrow via Int64# comparison
 toWord8# :: Int64 -> (# Word8 | (# #) #)
 toWord8# (I64# x64#) =
   let i# = int64ToInt# x64#
@@ -142,7 +142,7 @@ toWord8# (I64# x64#) =
     1# -> (# W8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C via Int64# comparison
+-- | Signed->unsigned narrow via Int64# comparison
 toWord16# :: Int64 -> (# Word16 | (# #) #)
 toWord16# (I64# x64#) =
   let i# = int64ToInt# x64#
@@ -151,7 +151,7 @@ toWord16# (I64# x64#) =
     1# -> (# W16# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C via Int64# comparison
+-- | Signed->unsigned narrow via Int64# comparison
 toWord32# :: Int64 -> (# Word32 | (# #) #)
 toWord32# (I64# x64#) =
   let i# = int64ToInt# x64#
@@ -160,13 +160,13 @@ toWord32# (I64# x64#) =
     1# -> (# W32# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative at Int64# level
+-- | Signed->unsigned, check non-negative at Int64# level
 toWord64# :: Int64 -> (# Word64 | (# #) #)
 toWord64# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
   1# -> (# W64# (wordToWord64# (int2Word# (int64ToInt# x64#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative at Int64# then roundtrip
+-- | Signed->unsigned, check non-negative at Int64# then roundtrip
 toWord# :: Int64 -> (# Word | (# #) #)
 toWord# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
   1# -> let i# = int64ToInt# x64#
@@ -175,7 +175,7 @@ toWord# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
            _  -> (# | (# #) #)
   _  -> (# | (# #) #)
 
--- | Pattern H: check non-negative at Int64# level, construct NS
+-- | Check non-negative at Int64# level, construct NS
 toNatural# :: Int64 -> (# Overflows | Natural #)
 toNatural# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
   1# -> let i# = int64ToInt# x64#
@@ -184,7 +184,7 @@ toNatural# (I64# x64#) = case geInt64# x64# (intToInt64# 0#) of
            _  -> (# Overflow | #)
   _  -> (# Underflow | #)
 
--- | Pattern G: bounds-checked float conversion via Int#
+-- | Bounds-checked float conversion via Int#
 toFloat# :: Int64 -> (# Overflows | Float #)
 toFloat# (I64# x64#) =
   let i# = int64ToInt# x64#
@@ -198,7 +198,7 @@ toFloat# (I64# x64#) =
       1# -> (# Overflow | #)
       _  -> (# Underflow | #)
 
--- | Pattern G: bounds-checked double conversion via Int#
+-- | Bounds-checked double conversion via Int#
 toDouble# :: Int64 -> (# Overflows | Double #)
 toDouble# (I64# x64#) =
   let i# = int64ToInt# x64#

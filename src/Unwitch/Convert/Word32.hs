@@ -83,7 +83,7 @@ toFloat x = if
 toDouble :: Word32 -> Double
 toDouble = fromIntegral
 
--- | Pattern B: unsigned narrowing, roundtrip at Word#
+-- | Unsigned narrowing, roundtrip at Word#
 toWord8# :: Word32 -> (# Word8 | (# #) #)
 toWord8# (W32# w32#) =
   let w# = word32ToWord# w32#
@@ -92,7 +92,7 @@ toWord8# (W32# w32#) =
     1# -> (# W8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern B: unsigned narrowing, roundtrip at Word#
+-- | Unsigned narrowing, roundtrip at Word#
 toWord16# :: Word32 -> (# Word16 | (# #) #)
 toWord16# (W32# w32#) =
   let w# = word32ToWord# w32#
@@ -105,7 +105,7 @@ toWord16# (W32# w32#) =
 toWord# :: Word32 -> (# Word | (# #) #)
 toWord# (W32# w32#) = (# W# (word32ToWord# w32#) | #)
 
--- | Pattern E: unsigned->signed, source fits in Int#, roundtrip at Int#
+-- | Unsigned->signed, source fits in Int#, roundtrip at Int#
 toInt8# :: Word32 -> (# Int8 | (# #) #)
 toInt8# (W32# w32#) =
   let i# = word2Int# (word32ToWord# w32#)
@@ -114,7 +114,7 @@ toInt8# (W32# w32#) =
     1# -> (# I8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern E: unsigned->signed, source fits in Int#, roundtrip at Int#
+-- | Unsigned->signed, source fits in Int#, roundtrip at Int#
 toInt16# :: Word32 -> (# Int16 | (# #) #)
 toInt16# (W32# w32#) =
   let i# = word2Int# (word32ToWord# w32#)
@@ -123,7 +123,7 @@ toInt16# (W32# w32#) =
     1# -> (# I16# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern E: unsigned->signed, roundtrip at Int#
+-- | Unsigned->signed, roundtrip at Int#
 toInt32# :: Word32 -> (# Int32 | (# #) #)
 toInt32# (W32# w32#) =
   let i# = word2Int# (word32ToWord# w32#)
@@ -140,7 +140,7 @@ toInt# (W32# w32#) =
     1# -> (# I# i# | #)
     _  -> (# | (# #) #)
 
--- | Pattern G: bounds-checked float conversion
+-- | Bounds-checked float conversion
 toFloat# :: Word32 -> (# Overflows | Float #)
 toFloat# (W32# w32#) = case leWord# (word32ToWord# w32#) 16777215## of
   1# -> (# | F# (int2Float# (word2Int# (word32ToWord# w32#))) #)

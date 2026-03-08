@@ -70,7 +70,7 @@ toFloat = fromIntegral
 toDouble :: Word16 -> Double
 toDouble = fromIntegral
 
--- | Pattern B: unsigned narrowing, roundtrip at Word#
+-- | Unsigned narrowing, roundtrip at Word#
 toWord8# :: Word16 -> (# Word8 | (# #) #)
 toWord8# (W16# w16#) =
   let w# = word16ToWord# w16#
@@ -79,7 +79,7 @@ toWord8# (W16# w16#) =
     1# -> (# W8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern E: unsigned->signed, source fits in Int#, roundtrip at Int#
+-- | Unsigned->signed, source fits in Int#, roundtrip at Int#
 toInt8# :: Word16 -> (# Int8 | (# #) #)
 toInt8# (W16# w16#) =
   let i# = word2Int# (word16ToWord# w16#)
@@ -88,7 +88,7 @@ toInt8# (W16# w16#) =
     1# -> (# I8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern E: unsigned->signed, source fits in Int#, roundtrip at Int#
+-- | Unsigned->signed, source fits in Int#, roundtrip at Int#
 toInt16# :: Word16 -> (# Int16 | (# #) #)
 toInt16# (W16# w16#) =
   let i# = word2Int# (word16ToWord# w16#)

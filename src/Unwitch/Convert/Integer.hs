@@ -100,7 +100,7 @@ toWord64 = Bits.toIntegralSized
 toWord :: Integer -> Maybe Word
 toWord = Bits.toIntegralSized
 
--- | Pattern G via IS/IP/IN: bounds-checked double conversion
+-- | Bounds-checked double conversion via IS/IP/IN
 toDouble# :: Integer -> (# Overflows | Double #)
 toDouble# x = case x of
   IS i# -> case i# <# -9007199254740991# of
@@ -111,7 +111,7 @@ toDouble# x = case x of
   IP _ -> (# Overflow | #)
   IN _ -> (# Underflow | #)
 
--- | Pattern G via IS/IP/IN: bounds-checked float conversion
+-- | Bounds-checked float conversion via IS/IP/IN
 toFloat# :: Integer -> (# Overflows | Float #)
 toFloat# x = case x of
   IS i# -> case i# <# -16777215# of
@@ -122,7 +122,7 @@ toFloat# x = case x of
   IP _ -> (# Overflow | #)
   IN _ -> (# Underflow | #)
 
--- | Pattern I+H: Integer->Natural via IS/IP/IN
+-- | Integer->Natural via IS/IP/IN
 toNatural# :: Integer -> (# Overflows | Natural #)
 toNatural# x = case x of
   IS i# -> case i# >=# 0# of
@@ -131,7 +131,7 @@ toNatural# x = case x of
   IP ba# -> (# | NB ba# #)
   IN _ -> (# Underflow | #)
 
--- | Pattern I: Integer->Int8 via IS/IP/IN, narrow and roundtrip at Int#
+-- | Integer->Int8 via IS/IP/IN, narrow and roundtrip at Int#
 toInt8# :: Integer -> (# Int8 | (# #) #)
 toInt8# x = case x of
   IS i# ->
@@ -142,7 +142,7 @@ toInt8# x = case x of
   IP _ -> (# | (# #) #)
   IN _ -> (# | (# #) #)
 
--- | Pattern I: Integer->Int16 via IS/IP/IN
+-- | Integer->Int16 via IS/IP/IN
 toInt16# :: Integer -> (# Int16 | (# #) #)
 toInt16# x = case x of
   IS i# ->
@@ -153,7 +153,7 @@ toInt16# x = case x of
   IP _ -> (# | (# #) #)
   IN _ -> (# | (# #) #)
 
--- | Pattern I: Integer->Int32 via IS/IP/IN
+-- | Integer->Int32 via IS/IP/IN
 toInt32# :: Integer -> (# Int32 | (# #) #)
 toInt32# x = case x of
   IS i# ->
@@ -164,21 +164,21 @@ toInt32# x = case x of
   IP _ -> (# | (# #) #)
   IN _ -> (# | (# #) #)
 
--- | Pattern I: Integer->Int64 via IS/IP/IN
+-- | Integer->Int64 via IS/IP/IN
 toInt64# :: Integer -> (# Int64 | (# #) #)
 toInt64# x = case x of
   IS i# -> (# I64# (intToInt64# i#) | #)
   IP _ -> (# | (# #) #)
   IN _ -> (# | (# #) #)
 
--- | Pattern I: Integer->Int via IS/IP/IN
+-- | Integer->Int via IS/IP/IN
 toInt# :: Integer -> (# Int | (# #) #)
 toInt# x = case x of
   IS i# -> (# I# i# | #)
   IP _ -> (# | (# #) #)
   IN _ -> (# | (# #) #)
 
--- | Pattern I: Integer->Word8, IS case uses signed->unsigned narrow
+-- | Integer->Word8, IS case uses signed->unsigned narrow
 toWord8# :: Integer -> (# Word8 | (# #) #)
 toWord8# x = case x of
   IS i# ->
@@ -189,7 +189,7 @@ toWord8# x = case x of
   IP _ -> (# | (# #) #)
   IN _ -> (# | (# #) #)
 
--- | Pattern I: Integer->Word16
+-- | Integer->Word16
 toWord16# :: Integer -> (# Word16 | (# #) #)
 toWord16# x = case x of
   IS i# ->
@@ -200,7 +200,7 @@ toWord16# x = case x of
   IP _ -> (# | (# #) #)
   IN _ -> (# | (# #) #)
 
--- | Pattern I: Integer->Word32
+-- | Integer->Word32
 toWord32# :: Integer -> (# Word32 | (# #) #)
 toWord32# x = case x of
   IS i# ->

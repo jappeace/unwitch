@@ -78,7 +78,7 @@ toFloat = fromIntegral
 toDouble :: Int16 -> Double
 toDouble = fromIntegral
 
--- | Pattern A: signed narrowing, roundtrip at Int#
+-- | Signed narrowing, roundtrip at Int#
 toInt8# :: Int16 -> (# Int8 | (# #) #)
 toInt8# (I16# x16#) =
   let i# = int16ToInt# x16#
@@ -87,7 +87,7 @@ toInt8# (I16# x16#) =
     1# -> (# I8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
+-- | Signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord8# :: Int16 -> (# Word8 | (# #) #)
 toWord8# (I16# x16#) =
   let i# = int16ToInt# x16#
@@ -96,31 +96,31 @@ toWord8# (I16# x16#) =
     1# -> (# W8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord16# :: Int16 -> (# Word16 | (# #) #)
 toWord16# (I16# x16#) = case int16ToInt# x16# >=# 0# of
   1# -> (# W16# (wordToWord16# (int2Word# (int16ToInt# x16#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord32# :: Int16 -> (# Word32 | (# #) #)
 toWord32# (I16# x16#) = case int16ToInt# x16# >=# 0# of
   1# -> (# W32# (wordToWord32# (int2Word# (int16ToInt# x16#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord64# :: Int16 -> (# Word64 | (# #) #)
 toWord64# (I16# x16#) = case int16ToInt# x16# >=# 0# of
   1# -> (# W64# (wordToWord64# (int2Word# (int16ToInt# x16#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord# :: Int16 -> (# Word | (# #) #)
 toWord# (I16# x16#) = case int16ToInt# x16# >=# 0# of
   1# -> (# W# (int2Word# (int16ToInt# x16#)) | #)
   _  -> (# | (# #) #)
 
--- | Pattern H: check non-negative, construct NS directly
+-- | Check non-negative, construct NS directly
 toNatural# :: Int16 -> (# Overflows | Natural #)
 toNatural# (I16# x16#) = case int16ToInt# x16# >=# 0# of
   1# -> (# | NS (int2Word# (int16ToInt# x16#)) #)

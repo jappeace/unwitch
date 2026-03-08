@@ -93,7 +93,7 @@ toDouble x = if
   | x > maxIntegralRepDouble -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
 
--- | Pattern J: via naturalToWordMaybe#, then narrow and roundtrip at Word#
+-- | Via naturalToWordMaybe#, then narrow and roundtrip at Word#
 toWord8# :: Natural -> (# Word8 | (# #) #)
 toWord8# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -103,7 +103,7 @@ toWord8# nat = case naturalToWordMaybe# nat of
       1# -> (# W8# n# | #)
       _  -> (# | (# #) #)
 
--- | Pattern J: via naturalToWordMaybe#, then narrow
+-- | Via naturalToWordMaybe#, then narrow
 toWord16# :: Natural -> (# Word16 | (# #) #)
 toWord16# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -113,7 +113,7 @@ toWord16# nat = case naturalToWordMaybe# nat of
       1# -> (# W16# n# | #)
       _  -> (# | (# #) #)
 
--- | Pattern J: via naturalToWordMaybe#, then narrow
+-- | Via naturalToWordMaybe#, then narrow
 toWord32# :: Natural -> (# Word32 | (# #) #)
 toWord32# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -123,19 +123,19 @@ toWord32# nat = case naturalToWordMaybe# nat of
       1# -> (# W32# n# | #)
       _  -> (# | (# #) #)
 
--- | Pattern J: via naturalToWordMaybe#, then widen to Word64
+-- | Via naturalToWordMaybe#, then widen to Word64
 toWord64# :: Natural -> (# Word64 | (# #) #)
 toWord64# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
   (# | w# #) -> (# W64# (wordToWord64# w#) | #)
 
--- | Pattern J: via naturalToWordMaybe#
+-- | Via naturalToWordMaybe#
 toWord# :: Natural -> (# Word | (# #) #)
 toWord# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
   (# | w# #) -> (# W# w# | #)
 
--- | Pattern J+F: via naturalToWordMaybe#, check upper bound for Int8
+-- | Via naturalToWordMaybe#, check upper bound for Int8
 toInt8# :: Natural -> (# Int8 | (# #) #)
 toInt8# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -143,7 +143,7 @@ toInt8# nat = case naturalToWordMaybe# nat of
     1# -> (# I8# (intToInt8# (word2Int# w#)) | #)
     _  -> (# | (# #) #)
 
--- | Pattern J+F: via naturalToWordMaybe#, check upper bound for Int16
+-- | Via naturalToWordMaybe#, check upper bound for Int16
 toInt16# :: Natural -> (# Int16 | (# #) #)
 toInt16# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -151,7 +151,7 @@ toInt16# nat = case naturalToWordMaybe# nat of
     1# -> (# I16# (intToInt16# (word2Int# w#)) | #)
     _  -> (# | (# #) #)
 
--- | Pattern J+F: via naturalToWordMaybe#, check upper bound for Int32
+-- | Via naturalToWordMaybe#, check upper bound for Int32
 toInt32# :: Natural -> (# Int32 | (# #) #)
 toInt32# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -159,7 +159,7 @@ toInt32# nat = case naturalToWordMaybe# nat of
     1# -> (# I32# (intToInt32# (word2Int# w#)) | #)
     _  -> (# | (# #) #)
 
--- | Pattern J: via naturalToWordMaybe#, check fits in non-negative Int64
+-- | Via naturalToWordMaybe#, check fits in non-negative Int64
 toInt64# :: Natural -> (# Int64 | (# #) #)
 toInt64# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -169,7 +169,7 @@ toInt64# nat = case naturalToWordMaybe# nat of
       1# -> (# I64# (intToInt64# i#) | #)
       _  -> (# | (# #) #)
 
--- | Pattern J: via naturalToWordMaybe#, check fits in non-negative Int
+-- | Via naturalToWordMaybe#, check fits in non-negative Int
 toInt# :: Natural -> (# Int | (# #) #)
 toInt# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# | (# #) #)
@@ -179,7 +179,7 @@ toInt# nat = case naturalToWordMaybe# nat of
       1# -> (# I# i# | #)
       _  -> (# | (# #) #)
 
--- | Pattern J+G: via naturalToWordMaybe#, bounds-checked float
+-- | Via naturalToWordMaybe#, bounds-checked float
 toFloat# :: Natural -> (# Overflows | Float #)
 toFloat# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# Overflow | #)
@@ -187,7 +187,7 @@ toFloat# nat = case naturalToWordMaybe# nat of
     1# -> (# | F# (int2Float# (word2Int# w#)) #)
     _  -> (# Overflow | #)
 
--- | Pattern J+G: via naturalToWordMaybe#, bounds-checked double
+-- | Via naturalToWordMaybe#, bounds-checked double
 toDouble# :: Natural -> (# Overflows | Double #)
 toDouble# nat = case naturalToWordMaybe# nat of
   (# (# #) | #) -> (# Overflow | #)

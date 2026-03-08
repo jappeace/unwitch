@@ -65,7 +65,7 @@ toFloat = fromIntegral
 toDouble :: Word8 -> Double
 toDouble = fromIntegral
 
--- | Pattern E: unsigned->signed, source fits in Int#, roundtrip at Int#
+-- | Unsigned->signed, source fits in Int#, roundtrip at Int#
 toInt8# :: Word8 -> (# Int8 | (# #) #)
 toInt8# (W8# w8#) =
   let i# = word2Int# (word8ToWord# w8#)

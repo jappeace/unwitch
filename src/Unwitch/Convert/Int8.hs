@@ -75,37 +75,37 @@ toFloat = fromIntegral
 toDouble :: Int8 -> Double
 toDouble = fromIntegral
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord8# :: Int8 -> (# Word8 | (# #) #)
 toWord8# (I8# x8#) = case int8ToInt# x8# >=# 0# of
   1# -> (# W8# (wordToWord8# (int2Word# (int8ToInt# x8#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord16# :: Int8 -> (# Word16 | (# #) #)
 toWord16# (I8# x8#) = case int8ToInt# x8# >=# 0# of
   1# -> (# W16# (wordToWord16# (int2Word# (int8ToInt# x8#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord32# :: Int8 -> (# Word32 | (# #) #)
 toWord32# (I8# x8#) = case int8ToInt# x8# >=# 0# of
   1# -> (# W32# (wordToWord32# (int2Word# (int8ToInt# x8#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord64# :: Int8 -> (# Word64 | (# #) #)
 toWord64# (I8# x8#) = case int8ToInt# x8# >=# 0# of
   1# -> (# W64# (wordToWord64# (int2Word# (int8ToInt# x8#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord# :: Int8 -> (# Word | (# #) #)
 toWord# (I8# x8#) = case int8ToInt# x8# >=# 0# of
   1# -> (# W# (int2Word# (int8ToInt# x8#)) | #)
   _  -> (# | (# #) #)
 
--- | Pattern H: check non-negative, construct NS directly
+-- | Check non-negative, construct NS directly
 toNatural# :: Int8 -> (# Overflows | Natural #)
 toNatural# (I8# x8#) = case int8ToInt# x8# >=# 0# of
   1# -> (# | NS (int2Word# (int8ToInt# x8#)) #)

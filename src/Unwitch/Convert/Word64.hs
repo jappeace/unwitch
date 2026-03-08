@@ -90,7 +90,7 @@ toDouble x = if
   | x > maxIntegralRepDouble -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
 
--- | Pattern B via Word64# comparison: unsigned narrowing
+-- | Unsigned narrowing via Word64# comparison
 toWord8# :: Word64 -> (# Word8 | (# #) #)
 toWord8# (W64# w64#) =
   let w# = word64ToWord# w64#
@@ -99,7 +99,7 @@ toWord8# (W64# w64#) =
     1# -> (# W8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern B via Word64# comparison
+-- | Unsigned narrowing via Word64# comparison
 toWord16# :: Word64 -> (# Word16 | (# #) #)
 toWord16# (W64# w64#) =
   let w# = word64ToWord# w64#
@@ -108,7 +108,7 @@ toWord16# (W64# w64#) =
     1# -> (# W16# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern B via Word64# comparison
+-- | Unsigned narrowing via Word64# comparison
 toWord32# :: Word64 -> (# Word32 | (# #) #)
 toWord32# (W64# w64#) =
   let w# = word64ToWord# w64#
@@ -125,25 +125,25 @@ toWord# (W64# w64#) =
     1# -> (# W# w# | #)
     _  -> (# | (# #) #)
 
--- | Pattern F: Word64 -> IntN, check upper bound at Word64# level
+-- | Check upper bound at Word64# level
 toInt8# :: Word64 -> (# Int8 | (# #) #)
 toInt8# (W64# w64#) = case leWord64# w64# (wordToWord64# 127##) of
   1# -> (# I8# (intToInt8# (word2Int# (word64ToWord# w64#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern F: Word64 -> Int16
+-- | Check upper bound for Int16
 toInt16# :: Word64 -> (# Int16 | (# #) #)
 toInt16# (W64# w64#) = case leWord64# w64# (wordToWord64# 32767##) of
   1# -> (# I16# (intToInt16# (word2Int# (word64ToWord# w64#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern F: Word64 -> Int32
+-- | Check upper bound for Int32
 toInt32# :: Word64 -> (# Int32 | (# #) #)
 toInt32# (W64# w64#) = case leWord64# w64# (wordToWord64# 2147483647##) of
   1# -> (# I32# (intToInt32# (word2Int# (word64ToWord# w64#))) | #)
   _  -> (# | (# #) #)
 
--- | Pattern F: Word64 -> Int64, check high bit not set
+-- | Check high bit not set for Int64
 toInt64# :: Word64 -> (# Int64 | (# #) #)
 toInt64# (W64# w64#) =
   let w# = word64ToWord# w64#
@@ -154,7 +154,7 @@ toInt64# (W64# w64#) =
       _  -> (# | (# #) #)
     _  -> (# | (# #) #)
 
--- | Pattern F: Word64 -> Int, check fits in non-negative Int range
+-- | Check fits in non-negative Int range
 toInt# :: Word64 -> (# Int | (# #) #)
 toInt# (W64# w64#) =
   let w# = word64ToWord# w64#
@@ -165,13 +165,13 @@ toInt# (W64# w64#) =
       _  -> (# | (# #) #)
     _  -> (# | (# #) #)
 
--- | Pattern G: bounds-checked float conversion at Word64# level
+-- | Bounds-checked float conversion at Word64# level
 toFloat# :: Word64 -> (# Overflows | Float #)
 toFloat# (W64# w64#) = case leWord64# w64# (wordToWord64# 16777215##) of
   1# -> (# | F# (int2Float# (word2Int# (word64ToWord# w64#))) #)
   _  -> (# Overflow | #)
 
--- | Pattern G: bounds-checked double conversion at Word64# level
+-- | Bounds-checked double conversion at Word64# level
 toDouble# :: Word64 -> (# Overflows | Double #)
 toDouble# (W64# w64#) = case leWord64# w64# (wordToWord64# 9007199254740991##) of
   1# -> (# | D# (int2Double# (word2Int# (word64ToWord# w64#))) #)

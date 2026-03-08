@@ -94,7 +94,7 @@ toDouble x = if
   | fromIntegral x > (maxIntegralRepDouble :: Integer)  -> Left Overflow
   | otherwise                                           -> Right $ fromIntegral x
 
--- | Pattern A: signed narrowing, roundtrip at Int#
+-- | Signed narrowing, roundtrip at Int#
 toInt8# :: Int -> (# Int8 | (# #) #)
 toInt8# (I# x#) =
   let n# = intToInt8# x#
@@ -102,7 +102,7 @@ toInt8# (I# x#) =
     1# -> (# I8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern A: signed narrowing, roundtrip at Int#
+-- | Signed narrowing, roundtrip at Int#
 toInt16# :: Int -> (# Int16 | (# #) #)
 toInt16# (I# x#) =
   let n# = intToInt16# x#
@@ -110,7 +110,7 @@ toInt16# (I# x#) =
     1# -> (# I16# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern A: signed narrowing, roundtrip at Int#
+-- | Signed narrowing, roundtrip at Int#
 toInt32# :: Int -> (# Int32 | (# #) #)
 toInt32# (I# x#) =
   let n# = intToInt32# x#
@@ -118,7 +118,7 @@ toInt32# (I# x#) =
     1# -> (# I32# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
+-- | Signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord8# :: Int -> (# Word8 | (# #) #)
 toWord8# (I# x#) =
   let n# = wordToWord8# (int2Word# x#)
@@ -126,7 +126,7 @@ toWord8# (I# x#) =
     1# -> (# W8# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
+-- | Signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord16# :: Int -> (# Word16 | (# #) #)
 toWord16# (I# x#) =
   let n# = wordToWord16# (int2Word# x#)
@@ -134,7 +134,7 @@ toWord16# (I# x#) =
     1# -> (# W16# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern C: signed->unsigned narrow, roundtrip via Word# back to Int#
+-- | Signed->unsigned narrow, roundtrip via Word# back to Int#
 toWord32# :: Int -> (# Word32 | (# #) #)
 toWord32# (I# x#) =
   let n# = wordToWord32# (int2Word# x#)
@@ -142,25 +142,25 @@ toWord32# (I# x#) =
     1# -> (# W32# n# | #)
     _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord64# :: Int -> (# Word64 | (# #) #)
 toWord64# (I# x#) = case x# >=# 0# of
   1# -> (# W64# (wordToWord64# (int2Word# x#)) | #)
   _  -> (# | (# #) #)
 
--- | Pattern D: signed->unsigned, check non-negative
+-- | Signed->unsigned, check non-negative
 toWord# :: Int -> (# Word | (# #) #)
 toWord# (I# x#) = case x# >=# 0# of
   1# -> (# W# (int2Word# x#) | #)
   _  -> (# | (# #) #)
 
--- | Pattern H: check non-negative, construct NS directly
+-- | Check non-negative, construct NS directly
 toNatural# :: Int -> (# Overflows | Natural #)
 toNatural# (I# i#) = case i# >=# 0# of
   1# -> (# | NS (int2Word# i#) #)
   _  -> (# Underflow | #)
 
--- | Pattern G: bounds-checked float conversion
+-- | Bounds-checked float conversion
 toFloat# :: Int -> (# Overflows | Float #)
 toFloat# (I# i#) = case i# <# -16777215# of
   1# -> (# Underflow | #)
@@ -168,7 +168,7 @@ toFloat# (I# i#) = case i# <# -16777215# of
     1# -> (# Overflow | #)
     _  -> (# | F# (int2Float# i#) #)
 
--- | Pattern G: bounds-checked double conversion
+-- | Bounds-checked double conversion
 toDouble# :: Int -> (# Overflows | Double #)
 toDouble# (I# i#) = case i# <# -9007199254740991# of
   1# -> (# Underflow | #)
