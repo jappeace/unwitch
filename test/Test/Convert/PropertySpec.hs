@@ -16,8 +16,11 @@ import qualified Unwitch.Convert.Word32 as Word32
 import qualified Unwitch.Convert.Word64 as Word64
 import qualified Unwitch.Convert.Natural as Natural
 import qualified Unwitch.Convert.Integer as Integer
+import qualified Unwitch.Convert.Word as Word
+import qualified Unwitch.Convert.Char as Char
 import qualified Unwitch.Convert.Float as Float
 import qualified Unwitch.Convert.Double as Double
+import Numeric.Natural (Natural)
 
 spec :: Spec
 spec = describe "Property tests" $ do
@@ -67,6 +70,134 @@ spec = describe "Property tests" $ do
 
     prop "Word8 -> Int32 -> Word8" $ \(x :: Word8) ->
       Int32.toWord8 (Word8.toInt32 x) `shouldBe` Just x
+
+    -- Int via Int
+    prop "Int8 -> Int -> Int8" $ \(x :: Int8) ->
+      Int.toInt8 (Int8.toInt x) `shouldBe` Just x
+
+    prop "Int16 -> Int -> Int16" $ \(x :: Int16) ->
+      Int.toInt16 (Int16.toInt x) `shouldBe` Just x
+
+    -- Int via Integer
+    prop "Int16 -> Integer -> Int16" $ \(x :: Int16) ->
+      Integer.toInt16 (Int16.toInteger x) `shouldBe` Just x
+
+    prop "Int32 -> Integer -> Int32" $ \(x :: Int32) ->
+      Integer.toInt32 (Int32.toInteger x) `shouldBe` Just x
+
+    prop "Int64 -> Integer -> Int64" $ \(x :: Int64) ->
+      Integer.toInt64 (Int64.toInteger x) `shouldBe` Just x
+
+    prop "Int -> Int64 -> Int" $ \(x :: Int) ->
+      Int64.toInt (Int.toInt64 x) `shouldBe` Just x
+
+    prop "Int -> Integer -> Int" $ \(x :: Int) ->
+      Integer.toInt (Int.toInteger x) `shouldBe` Just x
+
+    -- Word via Word
+    prop "Word8 -> Word -> Word8" $ \(x :: Word8) ->
+      Word.toWord8 (Word8.toWord x) `shouldBe` Just x
+
+    prop "Word16 -> Word -> Word16" $ \(x :: Word16) ->
+      Word.toWord16 (Word16.toWord x) `shouldBe` Just x
+
+    -- Word via Natural
+    prop "Word8 -> Natural -> Word8" $ \(x :: Word8) ->
+      Natural.toWord8 (Word8.toNatural x) `shouldBe` Just x
+
+    prop "Word16 -> Natural -> Word16" $ \(x :: Word16) ->
+      Natural.toWord16 (Word16.toNatural x) `shouldBe` Just x
+
+    prop "Word32 -> Natural -> Word32" $ \(x :: Word32) ->
+      Natural.toWord32 (Word32.toNatural x) `shouldBe` Just x
+
+    prop "Word64 -> Natural -> Word64" $ \(x :: Word64) ->
+      Natural.toWord64 (Word64.toNatural x) `shouldBe` Just x
+
+    prop "Word -> Natural -> Word" $ \(x :: Word) ->
+      Natural.toWord (Word.toNatural x) `shouldBe` Just x
+
+    -- Word via Integer
+    prop "Word64 -> Integer -> Word64" $ \(x :: Word64) ->
+      Integer.toWord64 (Word64.toInteger x) `shouldBe` Just x
+
+    prop "Word -> Word64 -> Word" $ \(x :: Word) ->
+      Word64.toWord (Word.toWord64 x) `shouldBe` Just x
+
+    prop "Word -> Integer -> Word" $ \(x :: Word) ->
+      Integer.toWord (Word.toInteger x) `shouldBe` Just x
+
+    -- Cross-sign: Word via signed
+    prop "Word8 -> Int64 -> Word8" $ \(x :: Word8) ->
+      Int64.toWord8 (Word8.toInt64 x) `shouldBe` Just x
+
+    prop "Word8 -> Int -> Word8" $ \(x :: Word8) ->
+      Int.toWord8 (Word8.toInt x) `shouldBe` Just x
+
+    prop "Word8 -> Integer -> Word8" $ \(x :: Word8) ->
+      Integer.toWord8 (Word8.toInteger x) `shouldBe` Just x
+
+    prop "Word16 -> Int32 -> Word16" $ \(x :: Word16) ->
+      Int32.toWord16 (Word16.toInt32 x) `shouldBe` Just x
+
+    prop "Word16 -> Int64 -> Word16" $ \(x :: Word16) ->
+      Int64.toWord16 (Word16.toInt64 x) `shouldBe` Just x
+
+    prop "Word16 -> Int -> Word16" $ \(x :: Word16) ->
+      Int.toWord16 (Word16.toInt x) `shouldBe` Just x
+
+    prop "Word16 -> Integer -> Word16" $ \(x :: Word16) ->
+      Integer.toWord16 (Word16.toInteger x) `shouldBe` Just x
+
+    prop "Word32 -> Int64 -> Word32" $ \(x :: Word32) ->
+      Int64.toWord32 (Word32.toInt64 x) `shouldBe` Just x
+
+    prop "Word32 -> Integer -> Word32" $ \(x :: Word32) ->
+      Integer.toWord32 (Word32.toInteger x) `shouldBe` Just x
+
+    -- Natural via Integer (Either pattern, generated via Word64)
+    prop "Natural -> Integer -> Natural" $ \(w :: Word64) ->
+      let x = fromIntegral w :: Natural
+      in Integer.toNatural (Natural.toInteger x) `shouldBe` Right x
+
+    -- Char
+    prop "Char -> Int -> Char" $ \(x :: Char) ->
+      Char.fromInt (Char.toInt x) `shouldBe` Just x
+
+    prop "Char -> Word -> Char" $ \(x :: Char) ->
+      Char.fromWord (Char.toWord x) `shouldBe` Just x
+
+    -- Via Float (Either ViaIntegerErrors pattern)
+    prop "Int8 -> Float -> Int8" $ \(x :: Int8) ->
+      Float.toInt8 (Int8.toFloat x) `shouldBe` Right x
+
+    prop "Int16 -> Float -> Int16" $ \(x :: Int16) ->
+      Float.toInt16 (Int16.toFloat x) `shouldBe` Right x
+
+    prop "Word8 -> Float -> Word8" $ \(x :: Word8) ->
+      Float.toWord8 (Word8.toFloat x) `shouldBe` Right x
+
+    prop "Word16 -> Float -> Word16" $ \(x :: Word16) ->
+      Float.toWord16 (Word16.toFloat x) `shouldBe` Right x
+
+    -- Via Double (Either ViaIntegerErrors pattern)
+    prop "Int8 -> Double -> Int8" $ \(x :: Int8) ->
+      Double.toInt8 (Int8.toDouble x) `shouldBe` Right x
+
+    prop "Int16 -> Double -> Int16" $ \(x :: Int16) ->
+      Double.toInt16 (Int16.toDouble x) `shouldBe` Right x
+
+    prop "Int32 -> Double -> Int32" $ \(x :: Int32) ->
+      Double.toInt32 (Int32.toDouble x) `shouldBe` Right x
+
+    prop "Word8 -> Double -> Word8" $ \(x :: Word8) ->
+      Double.toWord8 (Word8.toDouble x) `shouldBe` Right x
+
+    prop "Word16 -> Double -> Word16" $ \(x :: Word16) ->
+      Double.toWord16 (Word16.toDouble x) `shouldBe` Right x
+
+    prop "Word32 -> Double -> Word32" $ \(x :: Word32) ->
+      Double.toWord32 (Word32.toDouble x) `shouldBe` Right x
 
   describe "Fallible narrowing success agrees with fromIntegral" $ do
     prop "Int16 -> Int8: success implies fromIntegral match" $ \(x :: Int16) ->
