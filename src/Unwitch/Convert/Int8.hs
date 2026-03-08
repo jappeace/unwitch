@@ -12,6 +12,12 @@ module Unwitch.Convert.Int8
   , toNatural
   , toFloat
   , toDouble
+  , toWord8#
+  , toWord16#
+  , toWord32#
+  , toWord64#
+  , toWord#
+  , toNatural#
   )
 where
 
@@ -21,6 +27,12 @@ import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
 import           Prelude hiding (toInteger)
+import           GHC.Exts (Word(..), int8ToInt#, int2Word#,
+                           wordToWord8#, wordToWord16#, wordToWord32#,
+                           wordToWord64#, (>=#))
+import           GHC.Int (Int8(..))
+import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
+import           GHC.Num.Natural (Natural(NS))
 
 toInt16 :: Int8 -> Int16
 toInt16 = fromIntegral
@@ -62,3 +74,39 @@ toFloat = fromIntegral
 
 toDouble :: Int8 -> Double
 toDouble = fromIntegral
+
+-- | Signed->unsigned, check non-negative
+toWord8# :: Int8 -> (# Word8 | (# #) #)
+toWord8# (I8# x8#) = case int8ToInt# x8# >=# 0# of
+  1# -> (# W8# (wordToWord8# (int2Word# (int8ToInt# x8#))) | #)
+  _  -> (# | (# #) #)
+
+-- | Signed->unsigned, check non-negative
+toWord16# :: Int8 -> (# Word16 | (# #) #)
+toWord16# (I8# x8#) = case int8ToInt# x8# >=# 0# of
+  1# -> (# W16# (wordToWord16# (int2Word# (int8ToInt# x8#))) | #)
+  _  -> (# | (# #) #)
+
+-- | Signed->unsigned, check non-negative
+toWord32# :: Int8 -> (# Word32 | (# #) #)
+toWord32# (I8# x8#) = case int8ToInt# x8# >=# 0# of
+  1# -> (# W32# (wordToWord32# (int2Word# (int8ToInt# x8#))) | #)
+  _  -> (# | (# #) #)
+
+-- | Signed->unsigned, check non-negative
+toWord64# :: Int8 -> (# Word64 | (# #) #)
+toWord64# (I8# x8#) = case int8ToInt# x8# >=# 0# of
+  1# -> (# W64# (wordToWord64# (int2Word# (int8ToInt# x8#))) | #)
+  _  -> (# | (# #) #)
+
+-- | Signed->unsigned, check non-negative
+toWord# :: Int8 -> (# Word | (# #) #)
+toWord# (I8# x8#) = case int8ToInt# x8# >=# 0# of
+  1# -> (# W# (int2Word# (int8ToInt# x8#)) | #)
+  _  -> (# | (# #) #)
+
+-- | Check non-negative, construct NS directly
+toNatural# :: Int8 -> (# Overflows | Natural #)
+toNatural# (I8# x8#) = case int8ToInt# x8# >=# 0# of
+  1# -> (# | NS (int2Word# (int8ToInt# x8#)) #)
+  _  -> (# Underflow | #)

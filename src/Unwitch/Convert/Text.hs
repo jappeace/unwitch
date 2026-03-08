@@ -49,3 +49,4 @@ toByteStringLatin1 t = if T.all isLatin1 t
 
 isLatin1 :: Char -> Bool
 isLatin1 c = c <= '\xFF'
+

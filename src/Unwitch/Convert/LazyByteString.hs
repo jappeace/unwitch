@@ -45,3 +45,4 @@ toLazyTextUtf32LE = tryEvaluate . LTE.decodeUtf32LE
 
 toLazyTextUtf32BE :: LBS.ByteString -> Either UnicodeException LT.Text
 toLazyTextUtf32BE = tryEvaluate . LTE.decodeUtf32BE
+

@@ -46,20 +46,26 @@ data ViaIntegerErrors = MkInteger IntegerErrors
 toInt8 :: Float -> Either ViaIntegerErrors Int8
 toInt8 = toViaInteger Integer.toInt8
 
+
 toInt16 :: Float -> Either ViaIntegerErrors Int16
 toInt16 = toViaInteger Integer.toInt16
+
 
 toInt32 :: Float -> Either ViaIntegerErrors Int32
 toInt32 = toViaInteger Integer.toInt32
 
+
 toInt64 :: Float -> Either ViaIntegerErrors Int64
 toInt64 = toViaInteger Integer.toInt64
+
 
 toInt :: Float -> Either ViaIntegerErrors Int
 toInt = toViaInteger Integer.toInt
 
+
 toWord8 :: Float -> Either ViaIntegerErrors Word8
 toWord8 = toViaInteger Integer.toWord8
+
 
 toWord16 :: Float -> Either ViaIntegerErrors Word16
 toWord16 = toViaInteger Integer.toWord16
@@ -93,7 +99,6 @@ toInteger float = do
     | integer < -maxIntegralRepFloat -> Left $ IntegerFlow integer Underflow
     | integer > maxIntegralRepFloat -> Left $ IntegerFlow integer Overflow
     | otherwise -> Right integer
-
 
 data RationalErrors = IsNan
                     | IsInf Overflows

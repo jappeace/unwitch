@@ -15,3 +15,4 @@ toReal :: (Eq a, Num a) => Complex a -> Maybe a
 toReal c = if imagPart c == 0
   then Just $ realPart c
   else Nothing
+

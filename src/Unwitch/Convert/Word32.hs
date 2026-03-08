@@ -12,6 +12,14 @@ module Unwitch.Convert.Word32
   , toInteger
   , toFloat
   , toDouble
+  , toWord8#
+  , toWord16#
+  , toWord#
+  , toInt8#
+  , toInt16#
+  , toInt32#
+  , toInt#
+  , toFloat#
   )
 where
 
@@ -22,6 +30,17 @@ import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
 import           Prelude hiding (toInteger)
+import           GHC.Exts (Int(..), Word(..), Float(..),
+                           word32ToWord#, word2Int#,
+                           wordToWord8#, word8ToWord#,
+                           wordToWord16#, word16ToWord#,
+                           intToInt8#, int8ToInt#,
+                           intToInt16#, int16ToInt#,
+                           intToInt32#, int32ToInt#,
+                           int2Float#,
+                           eqWord#, leWord#, (==#), (>=#))
+import           GHC.Int (Int8(..), Int16(..), Int32(..))
+import           GHC.Word (Word8(..), Word16(..), Word32(..))
 
 toWord8 :: Word32 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
@@ -63,3 +82,66 @@ toFloat x = if
 
 toDouble :: Word32 -> Double
 toDouble = fromIntegral
+
+-- | Unsigned narrowing, roundtrip at Word#
+toWord8# :: Word32 -> (# Word8 | (# #) #)
+toWord8# (W32# w32#) =
+  let w# = word32ToWord# w32#
+      n# = wordToWord8# w#
+  in case word8ToWord# n# `eqWord#` w# of
+    1# -> (# W8# n# | #)
+    _  -> (# | (# #) #)
+
+-- | Unsigned narrowing, roundtrip at Word#
+toWord16# :: Word32 -> (# Word16 | (# #) #)
+toWord16# (W32# w32#) =
+  let w# = word32ToWord# w32#
+      n# = wordToWord16# w#
+  in case word16ToWord# n# `eqWord#` w# of
+    1# -> (# W16# n# | #)
+    _  -> (# | (# #) #)
+
+-- | Word32 always fits in Word (Word is at least 32 bits)
+toWord# :: Word32 -> (# Word | (# #) #)
+toWord# (W32# w32#) = (# W# (word32ToWord# w32#) | #)
+
+-- | Unsigned->signed, source fits in Int#, roundtrip at Int#
+toInt8# :: Word32 -> (# Int8 | (# #) #)
+toInt8# (W32# w32#) =
+  let i# = word2Int# (word32ToWord# w32#)
+      n# = intToInt8# i#
+  in case int8ToInt# n# ==# i# of
+    1# -> (# I8# n# | #)
+    _  -> (# | (# #) #)
+
+-- | Unsigned->signed, source fits in Int#, roundtrip at Int#
+toInt16# :: Word32 -> (# Int16 | (# #) #)
+toInt16# (W32# w32#) =
+  let i# = word2Int# (word32ToWord# w32#)
+      n# = intToInt16# i#
+  in case int16ToInt# n# ==# i# of
+    1# -> (# I16# n# | #)
+    _  -> (# | (# #) #)
+
+-- | Unsigned->signed, roundtrip at Int#
+toInt32# :: Word32 -> (# Int32 | (# #) #)
+toInt32# (W32# w32#) =
+  let i# = word2Int# (word32ToWord# w32#)
+      n# = intToInt32# i#
+  in case int32ToInt# n# ==# i# of
+    1# -> (# I32# n# | #)
+    _  -> (# | (# #) #)
+
+-- | Word32 fits in non-negative Int on all platforms, check via sign bit
+toInt# :: Word32 -> (# Int | (# #) #)
+toInt# (W32# w32#) =
+  let i# = word2Int# (word32ToWord# w32#)
+  in case i# >=# 0# of
+    1# -> (# I# i# | #)
+    _  -> (# | (# #) #)
+
+-- | Bounds-checked float conversion
+toFloat# :: Word32 -> (# Overflows | Float #)
+toFloat# (W32# w32#) = case leWord# (word32ToWord# w32#) 16777215## of
+  1# -> (# | F# (int2Float# (word2Int# (word32ToWord# w32#))) #)
+  _  -> (# Overflow | #)

@@ -3,10 +3,14 @@ module Unwitch.Convert.Char
   , toWord
   , fromInt
   , fromWord
+  , fromInt#
+  , fromWord#
   )
 where
 
 import Data.Char (ord, chr)
+import GHC.Exts (Int(..), Word(..), Char(..), chr#,
+                 word2Int#, (>=#), (<=#), leWord#, gtWord#)
 
 -- | Converts a Char to its Unicode codepoint as Int. Infallible.
 toInt :: Char -> Int
@@ -23,12 +27,34 @@ fromInt i = if isValidCodepoint (fromIntegral i)
   then Just $ chr i
   else Nothing
 
+-- | Unboxed variant of 'fromInt'. Checks valid Unicode codepoint range.
+fromInt# :: Int -> (# Char | (# #) #)
+fromInt# (I# i#) = case i# >=# 0# of
+  1# -> case i# <=# 0xD7FF# of
+    1# -> (# C# (chr# i#) | #)
+    _  -> case i# >=# 0xE000# of
+      1# -> case i# <=# 0x10FFFF# of
+        1# -> (# C# (chr# i#) | #)
+        _  -> (# | (# #) #)
+      _  -> (# | (# #) #)
+  _  -> (# | (# #) #)
+
 -- | Converts a Word to a Char if it is a valid Unicode codepoint.
 -- Valid range: 0..0xD7FF and 0xE000..0x10FFFF (excludes surrogates).
 fromWord :: Word -> Maybe Char
 fromWord w = if isValidCodepoint (fromIntegral w)
   then Just $ chr (fromIntegral w)
   else Nothing
+
+-- | Unboxed variant of 'fromWord'. Checks valid Unicode codepoint range.
+fromWord# :: Word -> (# Char | (# #) #)
+fromWord# (W# w#) = case leWord# w# 0xD7FF## of
+  1# -> (# C# (chr# (word2Int# w#)) | #)
+  _  -> case gtWord# w# 0xDFFF## of
+    1# -> case leWord# w# 0x10FFFF## of
+      1# -> (# C# (chr# (word2Int# w#)) | #)
+      _  -> (# | (# #) #)
+    _  -> (# | (# #) #)
 
 isValidCodepoint :: Integer -> Bool
 isValidCodepoint cp =

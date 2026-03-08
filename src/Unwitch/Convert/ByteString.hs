@@ -52,3 +52,4 @@ toTextUtf32LE = tryEvaluate . TE.decodeUtf32LE
 
 toTextUtf32BE :: ByteString -> Either UnicodeException Text
 toTextUtf32BE = tryEvaluate . TE.decodeUtf32BE
+
