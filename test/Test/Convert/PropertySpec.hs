@@ -5,6 +5,8 @@ import Test.Hspec
 import Test.Hspec.QuickCheck (prop)
 import Data.Int
 import Data.Word
+import Data.Fixed (Fixed, E6)
+import Data.Ratio (Ratio)
 import qualified Unwitch.Convert.Int8 as Int8
 import qualified Unwitch.Convert.Int16 as Int16
 import qualified Unwitch.Convert.Int32 as Int32
@@ -20,6 +22,8 @@ import qualified Unwitch.Convert.Word as Word
 import qualified Unwitch.Convert.Char as Char
 import qualified Unwitch.Convert.Float as Float
 import qualified Unwitch.Convert.Double as Double
+import qualified Unwitch.Convert.Ratio as Ratio
+import qualified Unwitch.Convert.Fixed as Fixed
 import Numeric.Natural (Natural)
 
 spec :: Spec
@@ -398,6 +402,25 @@ spec = describe "Property tests" $ do
     prop "Int64 -> Word64: Nothing iff x < 0" $ \(x :: Int64) ->
       (Int64.toWord64 x == Nothing) `shouldBe` (x < 0)
 
+    prop "Int -> Word: Nothing iff x < 0" $ \(x :: Int) ->
+      (Int.toWord x == Nothing) `shouldBe` (x < 0)
+
+  describe "Unsigned-to-signed same-width: exact failure condition" $ do
+    prop "Word8 -> Int8: Nothing iff x > 127" $ \(x :: Word8) ->
+      (Word8.toInt8 x == Nothing) `shouldBe` (x > 127)
+
+    prop "Word16 -> Int16: Nothing iff x > 32767" $ \(x :: Word16) ->
+      (Word16.toInt16 x == Nothing) `shouldBe` (x > 32767)
+
+    prop "Word32 -> Int32: Nothing iff x > 2147483647" $ \(x :: Word32) ->
+      (Word32.toInt32 x == Nothing) `shouldBe` (x > 2147483647)
+
+    prop "Word64 -> Int64: Nothing iff x > fromIntegral (maxBound :: Int64)" $ \(x :: Word64) ->
+      (Word64.toInt64 x == Nothing) `shouldBe` (x > fromIntegral (maxBound :: Int64))
+
+    prop "Word -> Int: Nothing iff x > fromIntegral (maxBound :: Int)" $ \(x :: Word) ->
+      (Word.toInt x == Nothing) `shouldBe` (x > fromIntegral (maxBound :: Int))
+
   describe "Cross-sign narrowing: exact failure condition" $ do
     prop "Int16 -> Word8: Nothing iff x < 0 || x > 255" $ \(x :: Int16) ->
       (Int16.toWord8 x == Nothing) `shouldBe` (x < 0 || x > 255)
@@ -416,6 +439,54 @@ spec = describe "Property tests" $ do
 
     prop "Word64 -> Int32: Nothing iff x > 2147483647" $ \(x :: Word64) ->
       (Word64.toInt32 x == Nothing) `shouldBe` (x > 2147483647)
+
+    prop "Int -> Word8: Nothing iff x < 0 || x > 255" $ \(x :: Int) ->
+      (Int.toWord8 x == Nothing) `shouldBe` (x < 0 || x > 255)
+
+    prop "Int -> Word16: Nothing iff x < 0 || x > 65535" $ \(x :: Int) ->
+      (Int.toWord16 x == Nothing) `shouldBe` (x < 0 || x > 65535)
+
+    prop "Int -> Word32: Nothing iff x < 0 || x > 4294967295" $ \(x :: Int) ->
+      (Int.toWord32 x == Nothing) `shouldBe` (x < 0 || x > 4294967295)
+
+    prop "Word -> Int8: Nothing iff x > 127" $ \(x :: Word) ->
+      (Word.toInt8 x == Nothing) `shouldBe` (x > 127)
+
+    prop "Word -> Int16: Nothing iff x > 32767" $ \(x :: Word) ->
+      (Word.toInt16 x == Nothing) `shouldBe` (x > 32767)
+
+    prop "Word -> Int32: Nothing iff x > 2147483647" $ \(x :: Word) ->
+      (Word.toInt32 x == Nothing) `shouldBe` (x > 2147483647)
+
+  describe "Int/Word/Natural Float range check" $ do
+    prop "Int -> Float: succeeds iff abs value <= maxRepFloat" $ \(x :: Int) ->
+      let xi = fromIntegral x :: Integer
+      in isRight (Int.toFloat x) `shouldBe`
+           (xi >= -maxRepFloat && xi <= maxRepFloat)
+
+    prop "Word -> Float: succeeds iff value <= maxRepFloat" $ \(x :: Word) ->
+      isRight (Word.toFloat x) `shouldBe`
+        (fromIntegral x <= (maxRepFloat :: Integer))
+
+    prop "Natural -> Float: succeeds iff value <= maxRepFloat" $ \(w :: Word64) ->
+      let x = fromIntegral w :: Natural
+      in isRight (Natural.toFloat x) `shouldBe`
+           (fromIntegral w <= (maxRepFloat :: Integer))
+
+  describe "Int/Word/Natural Double range check" $ do
+    prop "Int -> Double: succeeds iff abs value <= maxRepDouble" $ \(x :: Int) ->
+      let xi = fromIntegral x :: Integer
+      in isRight (Int.toDouble x) `shouldBe`
+           (xi >= -maxRepDouble && xi <= maxRepDouble)
+
+    prop "Word -> Double: succeeds iff value <= maxRepDouble" $ \(x :: Word) ->
+      isRight (Word.toDouble x) `shouldBe`
+        (fromIntegral x <= (maxRepDouble :: Integer))
+
+    prop "Natural -> Double: succeeds iff value <= maxRepDouble" $ \(w :: Word64) ->
+      let x = fromIntegral w :: Natural
+      in isRight (Natural.toDouble x) `shouldBe`
+           (fromIntegral w <= (maxRepDouble :: Integer))
 
   describe "Float/Double to integer: exact success condition" $ do
     prop "Float -> Integer: succeeds iff finite and whole" $ \(x :: Float) ->
@@ -471,6 +542,16 @@ spec = describe "Property tests" $ do
       in if isNaN x
          then y `shouldSatisfy` isNaN
          else y `shouldBe` x
+
+  describe "Ratio round-trip" $ do
+    prop "Int8 -> Ratio Int8 -> Int8" $ \(x :: Int8) ->
+      let r = Ratio.fromIntegralToRatio x :: Ratio Int8
+      in Ratio.unwrapIfDenominatorOne r `shouldBe` Just x
+
+  describe "Fixed round-trip" $ do
+    prop "Integer -> Fixed E6 -> Integer for whole numbers" $ \(x :: Integer) ->
+      let f = Fixed.fromInteger x :: Fixed E6
+      in Fixed.toInteger f `shouldBe` Just x
 
 maxRepFloat :: Num a => a
 maxRepFloat = 16777215

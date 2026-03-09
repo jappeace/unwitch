@@ -1,3 +1,4 @@
+-- | Conversions from 'Int16'.
 module Unwitch.Convert.Int16
   ( -- * Conversions
     toInt8

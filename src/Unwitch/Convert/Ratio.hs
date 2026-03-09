@@ -1,3 +1,4 @@
+-- | Conversions from 'Data.Ratio.Ratio'.
 module Unwitch.Convert.Ratio
   ( unwrapIfDenominatorOne
   , fromIntegralToRatio

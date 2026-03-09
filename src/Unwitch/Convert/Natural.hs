@@ -1,3 +1,4 @@
+-- | Conversions from 'Natural'.
 module Unwitch.Convert.Natural
   ( -- * Conversions
     toWord8

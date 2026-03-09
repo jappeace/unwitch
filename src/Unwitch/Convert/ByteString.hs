@@ -1,3 +1,4 @@
+-- | Conversions from 'Data.ByteString.ByteString'.
 module Unwitch.Convert.ByteString
   ( toLazyByteString
   , toShortByteString

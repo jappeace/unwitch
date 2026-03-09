@@ -1,3 +1,4 @@
+-- | Conversions from 'Data.Text.Text'.
 module Unwitch.Convert.Text
   ( toLazyText
   , toString

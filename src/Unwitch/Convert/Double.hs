@@ -1,3 +1,4 @@
+-- | Conversions from 'Double'.
 module Unwitch.Convert.Double
   ( toFloat
   , toFixed
