@@ -1,5 +1,6 @@
 module Unwitch.Convert.Natural
-  ( toWord8
+  ( -- * Conversions
+    toWord8
   , toWord16
   , toWord32
   , toWord64
@@ -12,6 +13,8 @@ module Unwitch.Convert.Natural
   , toInteger
   , toFloat
   , toDouble
+  -- * Unboxed conversions
+  -- $unboxed
   , toWord8#
   , toWord16#
   , toWord32#
@@ -49,6 +52,12 @@ import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
 import           GHC.Int (Int8(..), Int16(..), Int32(..), Int64(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (naturalToWordMaybe#)
+
+-- $unboxed
+-- These use GHC unboxed types and unboxed sums for zero-allocation
+-- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
+-- @UnboxedTuples@ language extensions.
+-- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
 toWord8 :: Natural -> Maybe Word8
 toWord8 = Bits.toIntegralSized

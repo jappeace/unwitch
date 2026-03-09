@@ -1,5 +1,6 @@
 module Unwitch.Convert.Int8
-  ( toInt16
+  ( -- * Conversions
+    toInt16
   , toInt32
   , toInt64
   , toInt
@@ -12,6 +13,8 @@ module Unwitch.Convert.Int8
   , toNatural
   , toFloat
   , toDouble
+  -- * Unboxed conversions
+  -- $unboxed
   , toWord8#
   , toWord16#
   , toWord32#
@@ -33,6 +36,12 @@ import           GHC.Exts (Word(..), int8ToInt#, int2Word#,
 import           GHC.Int (Int8(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (Natural(NS))
+
+-- $unboxed
+-- These use GHC unboxed types and unboxed sums for zero-allocation
+-- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
+-- @UnboxedTuples@ language extensions.
+-- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
 toInt16 :: Int8 -> Int16
 toInt16 = fromIntegral

@@ -1,8 +1,11 @@
 module Unwitch.Convert.Char
-  ( toInt
+  ( -- * Conversions
+    toInt
   , toWord
   , fromInt
   , fromWord
+  -- * Unboxed conversions
+  -- $unboxed
   , fromInt#
   , fromWord#
   )
@@ -11,6 +14,12 @@ where
 import Data.Char (ord, chr)
 import GHC.Exts (Int(..), Word(..), Char(..), chr#,
                  word2Int#, (>=#), (<=#), leWord#, gtWord#)
+
+-- $unboxed
+-- These use GHC unboxed types and unboxed sums for zero-allocation
+-- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
+-- @UnboxedTuples@ language extensions.
+-- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
 -- | Converts a Char to its Unicode codepoint as Int. Infallible.
 toInt :: Char -> Int

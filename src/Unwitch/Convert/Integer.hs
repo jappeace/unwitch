@@ -1,29 +1,32 @@
 module Unwitch.Convert.Integer
-  ( toDouble
-  , toDouble#
+  ( -- * Conversions
+    toDouble
   , toFloat
-  , toFloat#
   , toNatural
-  , toNatural#
   , toInt8
-  , toInt8#
   , toInt16
-  , toInt16#
   , toInt32
-  , toInt32#
   , toInt64
-  , toInt64#
   , toInt
-  , toInt#
   , toWord8
-  , toWord8#
   , toWord16
-  , toWord16#
   , toWord32
-  , toWord32#
   , toWord64
-  , toWord64#
   , toWord
+  -- * Unboxed conversions
+  -- $unboxed
+  , toDouble#
+  , toFloat#
+  , toNatural#
+  , toInt8#
+  , toInt16#
+  , toInt32#
+  , toInt64#
+  , toInt#
+  , toWord8#
+  , toWord16#
+  , toWord32#
+  , toWord64#
   , toWord#
   )
 where
@@ -52,6 +55,11 @@ import           GHC.Num.Integer (Integer(..), integerToWord#,
                                   integerFromWord#, integerEq#)
 import           GHC.Num.Natural (Natural(NS, NB))
 
+-- $unboxed
+-- These use GHC unboxed types and unboxed sums for zero-allocation
+-- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
+-- @UnboxedTuples@ language extensions.
+-- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
 toDouble :: Integer -> Either Overflows Double
 toDouble integer = if
