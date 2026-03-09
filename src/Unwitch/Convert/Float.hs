@@ -1,3 +1,4 @@
+-- | Conversions from 'Float'.
 module Unwitch.Convert.Float
   ( toDouble
   , toRational

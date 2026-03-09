@@ -1,3 +1,4 @@
+-- | Conversions from 'Data.Fixed.Fixed'.
 module Unwitch.Convert.Fixed
   ( fromInteger
   , toInteger

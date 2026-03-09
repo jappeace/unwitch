@@ -1,3 +1,4 @@
+-- | Constants used for range-checking floating-point conversions.
 module Unwitch.Constant
   ( maxIntegralRepDouble
   , maxIntegralRepFloat

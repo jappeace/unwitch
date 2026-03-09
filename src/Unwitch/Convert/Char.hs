@@ -1,3 +1,4 @@
+-- | Conversions from 'Char'.
 module Unwitch.Convert.Char
   ( -- * Conversions
     toInt

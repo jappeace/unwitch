@@ -1,3 +1,4 @@
+-- | Conversions from 'Int64'.
 module Unwitch.Convert.Int64
   ( -- * Conversions
     toInt8

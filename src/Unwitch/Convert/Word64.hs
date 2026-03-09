@@ -1,3 +1,4 @@
+-- | Conversions from 'Word64'.
 module Unwitch.Convert.Word64
   ( -- * Conversions
     toWord8

@@ -1,3 +1,4 @@
+-- | Conversions from 'Integer'.
 module Unwitch.Convert.Integer
   ( -- * Conversions
     toDouble

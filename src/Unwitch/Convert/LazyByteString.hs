@@ -1,3 +1,4 @@
+-- | Conversions from lazy 'Data.ByteString.Lazy.ByteString'.
 module Unwitch.Convert.LazyByteString
   ( toByteString
   , toWord8s

@@ -1,3 +1,4 @@
+-- | Conversions from 'Data.ByteString.Short.ShortByteString'.
 module Unwitch.Convert.ShortByteString
   ( toByteString
   , toWord8s
