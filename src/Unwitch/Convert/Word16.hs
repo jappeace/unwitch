@@ -1,5 +1,6 @@
 module Unwitch.Convert.Word16
-  ( toWord8
+  ( -- * Conversions
+    toWord8
   , toWord32
   , toWord64
   , toWord
@@ -12,6 +13,8 @@ module Unwitch.Convert.Word16
   , toInteger
   , toFloat
   , toDouble
+  -- * Unboxed conversions
+  -- $unboxed
   , toWord8#
   , toInt8#
   , toInt16#
@@ -30,6 +33,12 @@ import           GHC.Exts (word16ToWord#, word2Int#,
                            eqWord#, (==#))
 import           GHC.Int (Int8(..), Int16(..))
 import           GHC.Word (Word8(..), Word16(..))
+
+-- $unboxed
+-- These use GHC unboxed types and unboxed sums for zero-allocation
+-- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
+-- @UnboxedTuples@ language extensions.
+-- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
 toWord8 :: Word16 -> Maybe Word8
 toWord8 = Bits.toIntegralSized

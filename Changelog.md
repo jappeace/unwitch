@@ -1,6 +1,12 @@
 # Change log for unwitch project
 
-## Version 2.0.0 
+## Version 2.0.1
++ Add haddock section headers separating boxed and unboxed conversions
++ Each module with unboxed functions now has "Conversions" and
+  "Unboxed conversions" sections with documentation explaining
+  zero-allocation failure handling and required GHC extensions.
+
+## Version 2.0.0
 + fix cabal file links
 + delete complex module which made no sense.
 
