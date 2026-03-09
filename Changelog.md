@@ -1,5 +1,13 @@
 # Change log for unwitch project
 
+## Version 2.0.2
++ Wire up 9 missing test specs that existed but were not included in the test runner
++ Add module-level haddock to all Convert modules, Errors, and Constant
++ Add haddock to Overflows type and constructors
++ Expand property tests with 20+ new properties covering Int/Word
+  same-width conversions, Float/Double range checks, cross-sign
+  narrowing, Ratio round-trips, and Fixed round-trips
+
 ## Version 2.0.1
 + Add haddock section headers separating boxed and unboxed conversions
 + Each module with unboxed functions now has "Conversions" and
