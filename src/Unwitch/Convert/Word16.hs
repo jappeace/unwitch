@@ -41,55 +41,42 @@ import           GHC.Word (Word8(..), Word16(..))
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord8 :: Word16 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
--- | Lossless widening conversion.
 toWord32 :: Word16 -> Word32
 toWord32 = fromIntegral
 
--- | Lossless widening conversion.
 toWord64 :: Word16 -> Word64
 toWord64 = fromIntegral
 
--- | Lossless widening conversion.
 toWord :: Word16 -> Word
 toWord = fromIntegral
 
--- | Lossless conversion to 'Natural'.
 toNatural :: Word16 -> Natural
 toNatural = fromIntegral
 
--- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt8 :: Word16 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
--- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt16 :: Word16 -> Maybe Int16
 toInt16 = Bits.toIntegralSized
 
--- | Lossless unsigned-to-signed conversion.
 toInt32 :: Word16 -> Int32
 toInt32 = fromIntegral
 
--- | Lossless unsigned-to-signed conversion.
 toInt64 :: Word16 -> Int64
 toInt64 = fromIntegral
 
--- | Lossless unsigned-to-signed conversion.
 toInt :: Word16 -> Int
 toInt = fromIntegral
 
--- | Lossless conversion to 'Integer'.
 toInteger :: Word16 -> Integer
 toInteger = fromIntegral
 
--- | Lossless conversion to 'Float'.
 toFloat :: Word16 -> Float
 toFloat = fromIntegral
 
--- | Lossless conversion to 'Double'.
 toDouble :: Word16 -> Double
 toDouble = fromIntegral
 

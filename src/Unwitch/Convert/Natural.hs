@@ -60,47 +60,36 @@ import           GHC.Num.Natural (naturalToWordMaybe#)
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord8 :: Natural -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord16 :: Natural -> Maybe Word16
 toWord16 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord32 :: Natural -> Maybe Word32
 toWord32 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord64 :: Natural -> Maybe Word64
 toWord64 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord :: Natural -> Maybe Word
 toWord = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt8 :: Natural -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt16 :: Natural -> Maybe Int16
 toInt16 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt32 :: Natural -> Maybe Int32
 toInt32 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt64 :: Natural -> Maybe Int64
 toInt64 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt :: Natural -> Maybe Int
 toInt = Bits.toIntegralSized
 
--- | Lossless conversion to 'Integer'.
 toInteger :: Natural -> Integer
 toInteger = fromIntegral
 

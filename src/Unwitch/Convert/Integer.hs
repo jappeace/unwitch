@@ -82,43 +82,33 @@ toNatural integer = if
     | integer < 0 -> Left Underflow
     | otherwise -> Right $ Prelude.fromIntegral integer
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt8 :: Integer -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt16 :: Integer -> Maybe Int16
 toInt16 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt32 :: Integer -> Maybe Int32
 toInt32 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt64 :: Integer -> Maybe Int64
 toInt64 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt :: Integer -> Maybe Int
 toInt = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord8 :: Integer -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord16 :: Integer -> Maybe Word16
 toWord16 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord32 :: Integer -> Maybe Word32
 toWord32 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord64 :: Integer -> Maybe Word64
 toWord64 = Bits.toIntegralSized
 
--- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord :: Integer -> Maybe Word
 toWord = Bits.toIntegralSized
 

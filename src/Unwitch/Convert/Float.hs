@@ -32,7 +32,6 @@ import Data.Word
 import Data.Int
 import Numeric.Natural (Natural)
 
--- | Lossless widening conversion.
 toDouble :: Float -> Double
 toDouble = F.float2Double
 
