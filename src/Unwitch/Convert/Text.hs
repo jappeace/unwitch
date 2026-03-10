@@ -43,6 +43,7 @@ toByteStringUtf32LE = TE.encodeUtf32LE
 toByteStringUtf32BE :: Text -> ByteString
 toByteStringUtf32BE = TE.encodeUtf32BE
 
+-- | Returns 'Nothing' if any character exceeds @\xFF@.
 toByteStringLatin1 :: Text -> Maybe ByteString
 toByteStringLatin1 t = if T.all isLatin1 t
   then Just $ BSC8.pack (T.unpack t)

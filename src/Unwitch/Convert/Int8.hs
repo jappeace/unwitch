@@ -74,6 +74,7 @@ toWord64 = Bits.toIntegralSized
 toWord :: Int8 -> Maybe Word
 toWord = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Left' 'Underflow' for negative values.
 toNatural :: Int8 -> Either Overflows Natural
 toNatural x = if
   | x < 0     -> Left Underflow

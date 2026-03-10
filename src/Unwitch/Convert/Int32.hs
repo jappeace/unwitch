@@ -85,11 +85,13 @@ toWord64 = Bits.toIntegralSized
 toWord :: Int32 -> Maybe Word
 toWord = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Left' 'Underflow' for negative values.
 toNatural :: Int32 -> Either Overflows Natural
 toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
 
+-- | Checked conversion, fails if outside exact float integer range (+-16777215).
 toFloat :: Int32 -> Either Overflows Float
 toFloat x = if
   | x < -maxIntegralRepFloat -> Left Underflow

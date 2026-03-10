@@ -87,11 +87,13 @@ toInt = Bits.toIntegralSized
 toInteger :: Word -> Integer
 toInteger = fromIntegral
 
+-- | Checked conversion, fails if outside exact float integer range (+-16777215).
 toFloat :: Word -> Either Overflows Float
 toFloat x = if
   | x > maxIntegralRepFloat -> Left Overflow
   | otherwise               -> Right $ fromIntegral x
 
+-- | Checked conversion, fails if outside exact double integer range (+-9007199254740991).
 toDouble :: Word -> Either Overflows Double
 toDouble x = if
   | fromIntegral x > (maxIntegralRepDouble :: Integer) -> Left Overflow

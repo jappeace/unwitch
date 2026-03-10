@@ -42,6 +42,7 @@ toLazyByteStringUtf32LE = LTE.encodeUtf32LE
 toLazyByteStringUtf32BE :: LT.Text -> LBS.ByteString
 toLazyByteStringUtf32BE = LTE.encodeUtf32BE
 
+-- | Returns 'Nothing' if any character exceeds @\xFF@.
 toLazyByteStringLatin1 :: LT.Text -> Maybe LBS.ByteString
 toLazyByteStringLatin1 t = if LT.all isLatin1 t
   then Just $ LBSC8.pack (LT.unpack t)

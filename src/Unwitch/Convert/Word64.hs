@@ -90,11 +90,13 @@ toInt = Bits.toIntegralSized
 toInteger :: Word64 -> Integer
 toInteger = fromIntegral
 
+-- | Checked conversion, fails with 'Overflow' if outside exact float integer range.
 toFloat :: Word64 -> Either Overflows Float
 toFloat x = if
   | x > maxIntegralRepFloat -> Left Overflow
   | otherwise               -> Right $ fromIntegral x
 
+-- | Checked conversion, fails with 'Overflow' if outside exact double integer range.
 toDouble :: Word64 -> Either Overflows Double
 toDouble x = if
   | x > maxIntegralRepDouble -> Left Overflow

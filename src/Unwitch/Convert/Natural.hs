@@ -93,11 +93,13 @@ toInt = Bits.toIntegralSized
 toInteger :: Natural -> Integer
 toInteger = fromIntegral
 
+-- | Checked conversion, fails if outside exact float integer range (\u00b116777215).
 toFloat :: Natural -> Either Overflows Float
 toFloat x = if
   | x > maxIntegralRepFloat -> Left Overflow
   | otherwise               -> Right $ fromIntegral x
 
+-- | Checked conversion, fails if outside exact double integer range (\u00b19007199254740991).
 toDouble :: Natural -> Either Overflows Double
 toDouble x = if
   | x > maxIntegralRepDouble -> Left Overflow

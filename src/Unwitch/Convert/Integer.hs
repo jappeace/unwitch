@@ -62,18 +62,21 @@ import           GHC.Num.Natural (Natural(NS, NB))
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
+-- | Checked conversion, fails if outside exact double integer range (\u00b19007199254740991).
 toDouble :: Integer -> Either Overflows Double
 toDouble integer = if
     | integer < -maxIntegralRepDouble -> Left Underflow
     | integer > maxIntegralRepDouble -> Left Overflow
     | otherwise -> Right $ Prelude.fromIntegral integer
 
+-- | Checked conversion, fails if outside exact float integer range (\u00b116777215).
 toFloat :: Integer -> Either Overflows Float
 toFloat integer = if
     | integer < -maxIntegralRepFloat -> Left Underflow
     | integer > maxIntegralRepFloat -> Left Overflow
     | otherwise -> Right $ Prelude.fromIntegral integer
 
+-- | Returns 'Left' 'Underflow' for negative values.
 toNatural :: Integer -> Either Overflows Natural
 toNatural integer = if
     | integer < 0 -> Left Underflow

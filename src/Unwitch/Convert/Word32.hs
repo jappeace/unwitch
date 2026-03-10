@@ -85,6 +85,7 @@ toInt = Bits.toIntegralSized
 toInteger :: Word32 -> Integer
 toInteger = fromIntegral
 
+-- | Checked conversion, fails with 'Overflow' if outside exact float integer range.
 toFloat :: Word32 -> Either Overflows Float
 toFloat x = if
   | x > maxIntegralRepFloat -> Left Overflow

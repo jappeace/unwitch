@@ -1,5 +1,13 @@
 # Change log for unwitch project
 
+## Version 2.1.0
++ Add Haddock documentation to partial conversion functions across
+  all Convert modules — docs focus on non-obvious information only:
+  float/double precision limits, via-Integer failure modes (NaN,
+  infinity, fractional values), Underflow for negative-to-Natural,
+  and Latin-1 encoding constraints
++ Remove redundant docs that merely restated the type signature
+
 ## Version 2.0.2
 + Wire up 9 missing test specs that existed but were not included in the test runner
 + Add module-level haddock to all Convert modules, Errors, and Constant
