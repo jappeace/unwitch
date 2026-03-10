@@ -55,47 +55,60 @@ import           GHC.Num.Natural (Natural(NS))
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt8 :: Int32 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt16 :: Int32 -> Maybe Int16
 toInt16 = Bits.toIntegralSized
 
+-- | Lossless widening conversion.
 toInt64 :: Int32 -> Int64
 toInt64 = fromIntegral
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt :: Int32 -> Maybe Int
 toInt = Bits.toIntegralSized
 
+-- | Lossless conversion to 'Integer'.
 toInteger :: Int32 -> Integer
 toInteger = fromIntegral
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord8 :: Int32 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord16 :: Int32 -> Maybe Word16
 toWord16 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord32 :: Int32 -> Maybe Word32
 toWord32 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord64 :: Int32 -> Maybe Word64
 toWord64 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord :: Int32 -> Maybe Word
 toWord = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Left' 'Underflow' for negative values.
 toNatural :: Int32 -> Either Overflows Natural
 toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
 
+-- | Checked conversion, fails if outside exact float integer range (+-16777215).
 toFloat :: Int32 -> Either Overflows Float
 toFloat x = if
   | x < -maxIntegralRepFloat -> Left Underflow
   | x > maxIntegralRepFloat  -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
 
+-- | Lossless conversion to 'Double'.
 toDouble :: Int32 -> Double
 toDouble = fromIntegral
 

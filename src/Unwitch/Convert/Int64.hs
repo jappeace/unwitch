@@ -61,47 +61,60 @@ import           GHC.Num.Natural (Natural(NS))
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt8 :: Int64 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt16 :: Int64 -> Maybe Int16
 toInt16 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt32 :: Int64 -> Maybe Int32
 toInt32 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt :: Int64 -> Maybe Int
 toInt = Bits.toIntegralSized
 
+-- | Lossless conversion to 'Integer'.
 toInteger :: Int64 -> Integer
 toInteger = fromIntegral
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord8 :: Int64 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord16 :: Int64 -> Maybe Word16
 toWord16 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord32 :: Int64 -> Maybe Word32
 toWord32 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord64 :: Int64 -> Maybe Word64
 toWord64 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord :: Int64 -> Maybe Word
 toWord = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Left' 'Underflow' for negative values.
 toNatural :: Int64 -> Either Overflows Natural
 toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
 
+-- | Checked conversion, fails if outside exact float integer range (+-16777215).
 toFloat :: Int64 -> Either Overflows Float
 toFloat x = if
   | x < -maxIntegralRepFloat -> Left Underflow
   | x > maxIntegralRepFloat  -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
 
+-- | Checked conversion, fails if outside exact double integer range (+-9007199254740991).
 toDouble :: Int64 -> Either Overflows Double
 toDouble x = if
   | x < -maxIntegralRepDouble -> Left Underflow

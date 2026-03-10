@@ -1,5 +1,14 @@
 # Change log for unwitch project
 
+## Version 2.1.0
++ Add Haddock documentation to all boxed conversion functions across
+  all Convert modules (Int, Int8, Int16, Int32, Int64, Word, Word8,
+  Word16, Word32, Word64, Integer, Natural, Float, Double, Text,
+  LazyText, ByteString, LazyByteString, ShortByteString)
++ Each boxed function now documents: what the conversion does,
+  whether it is total or partial, overflow/precision behavior,
+  and the underlying mechanism (fromIntegral, realToFrac, etc.)
+
 ## Version 2.0.2
 + Wire up 9 missing test specs that existed but were not included in the test runner
 + Add module-level haddock to all Convert modules, Errors, and Constant

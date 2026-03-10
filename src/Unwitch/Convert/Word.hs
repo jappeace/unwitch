@@ -54,44 +54,57 @@ import           GHC.Word (Word8(..), Word16(..), Word32(..))
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord8 :: Word -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord16 :: Word -> Maybe Word16
 toWord16 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord32 :: Word -> Maybe Word32
 toWord32 = Bits.toIntegralSized
 
+-- | Lossless widening conversion.
 toWord64 :: Word -> Word64
 toWord64 = fromIntegral
 
+-- | Lossless conversion to 'Natural'.
 toNatural :: Word -> Natural
 toNatural = fromIntegral
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt8 :: Word -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt16 :: Word -> Maybe Int16
 toInt16 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt32 :: Word -> Maybe Int32
 toInt32 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt64 :: Word -> Maybe Int64
 toInt64 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt :: Word -> Maybe Int
 toInt = Bits.toIntegralSized
 
+-- | Lossless conversion to 'Integer'.
 toInteger :: Word -> Integer
 toInteger = fromIntegral
 
+-- | Checked conversion, fails if outside exact float integer range (+-16777215).
 toFloat :: Word -> Either Overflows Float
 toFloat x = if
   | x > maxIntegralRepFloat -> Left Overflow
   | otherwise               -> Right $ fromIntegral x
 
+-- | Checked conversion, fails if outside exact double integer range (+-9007199254740991).
 toDouble :: Word -> Either Overflows Double
 toDouble x = if
   | fromIntegral x > (maxIntegralRepDouble :: Integer) -> Left Overflow

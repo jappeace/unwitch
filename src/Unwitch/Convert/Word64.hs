@@ -57,44 +57,57 @@ import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord8 :: Word64 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord16 :: Word64 -> Maybe Word16
 toWord16 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord32 :: Word64 -> Maybe Word32
 toWord32 = Bits.toIntegralSized
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toWord :: Word64 -> Maybe Word
 toWord = Bits.toIntegralSized
 
+-- | Lossless conversion to 'Natural'.
 toNatural :: Word64 -> Natural
 toNatural = fromIntegral
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt8 :: Word64 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt16 :: Word64 -> Maybe Int16
 toInt16 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt32 :: Word64 -> Maybe Int32
 toInt32 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt64 :: Word64 -> Maybe Int64
 toInt64 = Bits.toIntegralSized
 
+-- | Unsigned-to-signed conversion, returns 'Nothing' if out of range.
 toInt :: Word64 -> Maybe Int
 toInt = Bits.toIntegralSized
 
+-- | Lossless conversion to 'Integer'.
 toInteger :: Word64 -> Integer
 toInteger = fromIntegral
 
+-- | Checked conversion, fails with 'Overflow' if outside exact float integer range.
 toFloat :: Word64 -> Either Overflows Float
 toFloat x = if
   | x > maxIntegralRepFloat -> Left Overflow
   | otherwise               -> Right $ fromIntegral x
 
+-- | Checked conversion, fails with 'Overflow' if outside exact double integer range.
 toDouble :: Word64 -> Either Overflows Double
 toDouble x = if
   | x > maxIntegralRepDouble -> Left Overflow

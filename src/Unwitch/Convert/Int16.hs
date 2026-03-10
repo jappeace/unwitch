@@ -47,44 +47,57 @@ import           GHC.Num.Natural (Natural(NS))
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
 
+-- | Narrowing conversion, returns 'Nothing' if out of range.
 toInt8 :: Int16 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
 
+-- | Lossless widening conversion.
 toInt32 :: Int16 -> Int32
 toInt32 = fromIntegral
 
+-- | Lossless widening conversion.
 toInt64 :: Int16 -> Int64
 toInt64 = fromIntegral
 
+-- | Lossless widening conversion.
 toInt :: Int16 -> Int
 toInt = fromIntegral
 
+-- | Lossless conversion to 'Integer'.
 toInteger :: Int16 -> Integer
 toInteger = fromIntegral
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord8 :: Int16 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord16 :: Int16 -> Maybe Word16
 toWord16 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord32 :: Int16 -> Maybe Word32
 toWord32 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord64 :: Int16 -> Maybe Word64
 toWord64 = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Nothing' if out of range.
 toWord :: Int16 -> Maybe Word
 toWord = Bits.toIntegralSized
 
+-- | Signed-to-unsigned conversion, returns 'Left' 'Underflow' for negative values.
 toNatural :: Int16 -> Either Overflows Natural
 toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
 
+-- | Lossless conversion to 'Float'.
 toFloat :: Int16 -> Float
 toFloat = fromIntegral
 
+-- | Lossless conversion to 'Double'.
 toDouble :: Int16 -> Double
 toDouble = fromIntegral
 
