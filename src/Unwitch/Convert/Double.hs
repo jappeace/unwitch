@@ -15,6 +15,7 @@ module Unwitch.Convert.Double
   , toWord64
   , toWord
   , toNatural
+  , toCInt
   , ViaIntegerErrors(..)
   , IntegerErrors(..)
   , RationalErrors(..)
@@ -33,6 +34,7 @@ import qualified Unwitch.Convert.Integer as Integer
 import Data.Word
 import Data.Int
 import Numeric.Natural (Natural)
+import Foreign.C.Types (CInt(CInt))
 
 -- | Lossy narrowing conversion, may lose precision.
 toFloat :: Double -> Float
@@ -100,6 +102,10 @@ toNatural double = do
   case Integer.toNatural integer of
     Left err -> Left $ MkInteger $ IntegerFlow integer err
     Right n -> Right n
+
+-- | Converts via 'Integer', fails if not a whole number or out of range.
+toCInt :: Double -> Either ViaIntegerErrors CInt
+toCInt x = CInt <$> toInt32 x
 
 -- | Convert via 'Integer' then narrow, combining errors.
 toViaInteger :: (Integer -> Maybe a) -> Double -> Either ViaIntegerErrors a

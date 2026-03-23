@@ -14,6 +14,7 @@ module Unwitch.Convert.Integer
   , toWord32
   , toWord64
   , toWord
+  , toCInt
   -- * Unboxed conversions
   -- $unboxed
   , toDouble#
@@ -38,6 +39,7 @@ import qualified Data.Bits as Bits
 import Data.Word
 import Data.Int
 import Numeric.Natural (Natural)
+import Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            intToInt8#, int8ToInt#,
                            intToInt16#, int16ToInt#,
@@ -111,6 +113,10 @@ toWord64 = Bits.toIntegralSized
 
 toWord :: Integer -> Maybe Word
 toWord = Bits.toIntegralSized
+
+-- | Narrowing conversion via Int32, fails if outside Int32 range.
+toCInt :: Integer -> Maybe CInt
+toCInt x = CInt <$> toInt32 x
 
 -- | Bounds-checked double conversion via IS/IP/IN
 toDouble# :: Integer -> (# Overflows | Double #)
