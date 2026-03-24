@@ -14,6 +14,7 @@ module Unwitch.Convert.Word16
   , toInteger
   , toFloat
   , toDouble
+  , toCInt
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
@@ -26,6 +27,7 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
+import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
 import           GHC.Exts (word16ToWord#, word2Int#,
                            wordToWord8#, word8ToWord#,
@@ -79,6 +81,10 @@ toFloat = fromIntegral
 
 toDouble :: Word16 -> Double
 toDouble = fromIntegral
+
+-- | Widening conversion via Int32, always succeeds.
+toCInt :: Word16 -> CInt
+toCInt x = CInt $ toInt32 x
 
 -- | Unsigned narrowing, roundtrip at Word#
 toWord8# :: Word16 -> (# Word8 | (# #) #)

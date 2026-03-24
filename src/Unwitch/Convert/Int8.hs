@@ -14,6 +14,7 @@ module Unwitch.Convert.Int8
   , toNatural
   , toFloat
   , toDouble
+  , toCInt
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
@@ -30,6 +31,7 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
+import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
 import           GHC.Exts (Word(..), int8ToInt#, int2Word#,
                            wordToWord8#, wordToWord16#, wordToWord32#,
@@ -79,6 +81,10 @@ toNatural :: Int8 -> Either Overflows Natural
 toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
+
+-- | Widening conversion via Int32, always succeeds.
+toCInt :: Int8 -> CInt
+toCInt x = CInt $ toInt32 x
 
 toFloat :: Int8 -> Float
 toFloat = fromIntegral

@@ -1,5 +1,15 @@
 # Change log for unwitch project
 
+## Version 2.2.0
++ New module Unwitch.Convert.CInt — conversions from CInt (Foreign.C.Types)
+  to all supported numeric types (Int, Int8–64, Word, Word8–64, Integer,
+  Natural, Float, Double)
++ Add toCInt to all 14 existing Convert modules (Int, Int8, Int16, Int32,
+  Int64, Integer, Word, Word8, Word16, Word32, Word64, Natural, Float,
+  Double)
++ Add CIntSpec test module with 12 tests covering total and fallible
+  CInt conversions
+
 ## Version 2.1.0
 + Add Haddock documentation to partial conversion functions across
   all Convert modules — docs focus on non-obvious information only:

@@ -1,6 +1,7 @@
 module Main where
 
 import Test.Hspec
+import qualified Test.Convert.CIntSpec
 import qualified Test.Convert.Int8Spec
 import qualified Test.Convert.Int16Spec
 import qualified Test.Convert.Int32Spec
@@ -28,6 +29,7 @@ import qualified Test.Convert.UnboxedSpec
 
 main :: IO ()
 main = hspec $ do
+  Test.Convert.CIntSpec.spec
   Test.Convert.Int8Spec.spec
   Test.Convert.Int16Spec.spec
   Test.Convert.Int32Spec.spec

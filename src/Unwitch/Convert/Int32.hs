@@ -14,6 +14,7 @@ module Unwitch.Convert.Int32
   , toNatural
   , toFloat
   , toDouble
+  , toCInt
   -- * Unboxed conversions
   -- $unboxed
   , toInt8#
@@ -35,6 +36,7 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
+import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
 import           GHC.Exts (Int(..), Word(..), Float(..),
                            int32ToInt#, intToInt8#, int8ToInt#,
@@ -97,6 +99,10 @@ toFloat x = if
   | x < -maxIntegralRepFloat -> Left Underflow
   | x > maxIntegralRepFloat  -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
+
+-- | Direct wrapping, CInt is a newtype over Int32.
+toCInt :: Int32 -> CInt
+toCInt = CInt
 
 toDouble :: Int32 -> Double
 toDouble = fromIntegral
