@@ -3,20 +3,24 @@ module Unwitch.Convert.LazyText
   ( toText
   , toString
   , fromString
+#ifdef __GLASGOW_HASKELL__
   , toLazyByteStringUtf8
   , toLazyByteStringUtf16LE
   , toLazyByteStringUtf16BE
   , toLazyByteStringUtf32LE
   , toLazyByteStringUtf32BE
   , toLazyByteStringLatin1
+#endif
   )
 where
 
-import Data.ByteString.Lazy qualified as LBS
-import Data.ByteString.Lazy.Char8 qualified as LBSC8
 import Data.Text (Text)
 import Data.Text.Lazy qualified as LT
+#ifdef __GLASGOW_HASKELL__
+import Data.ByteString.Lazy qualified as LBS
+import Data.ByteString.Lazy.Char8 qualified as LBSC8
 import Data.Text.Lazy.Encoding qualified as LTE
+#endif
 
 toText :: LT.Text -> Text
 toText = LT.toStrict
@@ -27,6 +31,7 @@ toString = LT.unpack
 fromString :: String -> LT.Text
 fromString = LT.pack
 
+#ifdef __GLASGOW_HASKELL__
 toLazyByteStringUtf8 :: LT.Text -> LBS.ByteString
 toLazyByteStringUtf8 = LTE.encodeUtf8
 
@@ -50,3 +55,4 @@ toLazyByteStringLatin1 t = if LT.all isLatin1 t
 
 isLatin1 :: Char -> Bool
 isLatin1 c = c <= '\xFF'
+#endif

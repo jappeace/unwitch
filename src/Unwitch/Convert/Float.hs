@@ -23,7 +23,6 @@ where
 
 import           Data.Bifunctor(first)
 import           Unwitch.Constant
-import qualified GHC.Float as F
 import           Unwitch.Convert.Ratio(unwrapIfDenominatorOne)
 import qualified Prelude
 import           Unwitch.Errors
@@ -35,7 +34,7 @@ import Numeric.Natural (Natural)
 import Foreign.C.Types (CInt(CInt))
 
 toDouble :: Float -> Double
-toDouble = F.float2Double
+toDouble = realToFrac
 
 data IntegerErrors = IntegerFlow Integer Overflows
                    | RationalConversion RationalErrors

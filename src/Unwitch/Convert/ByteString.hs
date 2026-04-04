@@ -5,11 +5,13 @@ module Unwitch.Convert.ByteString
   , toWord8s
   , fromWord8s
   , toTextLatin1
+#ifdef __GLASGOW_HASKELL__
   , toTextUtf8
   , toTextUtf16LE
   , toTextUtf16BE
   , toTextUtf32LE
   , toTextUtf32BE
+#endif
   )
 where
 
@@ -20,9 +22,11 @@ import Data.ByteString.Short qualified as SBS
 import Data.ByteString.Short (ShortByteString)
 import Data.Text (Text)
 import Data.Text.Encoding qualified as TE
-import Data.Text.Encoding.Error (UnicodeException)
 import Data.Word (Word8)
+#ifdef __GLASGOW_HASKELL__
+import Data.Text.Encoding.Error (UnicodeException)
 import Unwitch.TryEvaluate (tryEvaluate)
+#endif
 
 toLazyByteString :: ByteString -> LBS.ByteString
 toLazyByteString = LBS.fromStrict
@@ -39,6 +43,7 @@ fromWord8s = BS.pack
 toTextLatin1 :: ByteString -> Text
 toTextLatin1 = TE.decodeLatin1
 
+#ifdef __GLASGOW_HASKELL__
 toTextUtf8 :: ByteString -> Either UnicodeException Text
 toTextUtf8 = TE.decodeUtf8'
 
@@ -53,4 +58,4 @@ toTextUtf32LE = tryEvaluate . TE.decodeUtf32LE
 
 toTextUtf32BE :: ByteString -> Either UnicodeException Text
 toTextUtf32BE = tryEvaluate . TE.decodeUtf32BE
-
+#endif

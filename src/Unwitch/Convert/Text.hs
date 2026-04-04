@@ -20,7 +20,11 @@ import Data.Text.Encoding qualified as TE
 import Data.Text.Lazy qualified as LT
 
 toLazyText :: Text -> LT.Text
+#ifdef __GLASGOW_HASKELL__
 toLazyText = LT.fromStrict
+#else
+toLazyText = LT.toLazy
+#endif
 
 toString :: Text -> String
 toString = T.unpack
@@ -51,4 +55,3 @@ toByteStringLatin1 t = if T.all isLatin1 t
 
 isLatin1 :: Char -> Bool
 isLatin1 c = c <= '\xFF'
-

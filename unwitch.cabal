@@ -37,6 +37,7 @@ source-repository head
 
 common common-options
   default-extensions:
+      CPP
       EmptyCase
       FlexibleContexts
       FlexibleInstances
@@ -58,21 +59,26 @@ common common-options
       TypeApplications
       NumericUnderscores
       ImportQualifiedPost
-      UnboxedSums
-      UnboxedTuples
-      MagicHash
 
-  ghc-options:
-    -Wall -Wincomplete-uni-patterns
-    -Wincomplete-record-updates -Widentities -Wredundant-constraints
-    -Wcpp-undef -fwarn-tabs -Wpartial-fields
-    -fdefer-diagnostics -Wunused-packages
-    -fenable-th-splice-warnings
-    -fno-omit-yields
+  if impl(ghc)
+    default-extensions:
+        UnboxedSums
+        UnboxedTuples
+        MagicHash
+
+    ghc-options:
+      -Wall -Wincomplete-uni-patterns
+      -Wincomplete-record-updates -Widentities -Wredundant-constraints
+      -Wcpp-undef -fwarn-tabs -Wpartial-fields
+      -fdefer-diagnostics -Wunused-packages
+      -fenable-th-splice-warnings
+      -fno-omit-yields
+
+    build-depends:
+        ghc-bignum < 2
 
   build-depends:
       base >=4.18.0.0 && <4.23,
-      ghc-bignum < 2,
       bytestring >= 0.10 && < 0.13,
       text >= 1.2 && < 2.2
 

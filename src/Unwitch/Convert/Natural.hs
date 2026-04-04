@@ -15,6 +15,7 @@ module Unwitch.Convert.Natural
   , toFloat
   , toDouble
   , toCInt
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
@@ -29,6 +30,7 @@ module Unwitch.Convert.Natural
   , toInt#
   , toFloat#
   , toDouble#
+#endif
   )
 where
 
@@ -40,6 +42,7 @@ import           Data.Int
 import           Numeric.Natural (Natural)
 import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            word2Int#,
                            wordToWord8#, word8ToWord#,
@@ -55,12 +58,15 @@ import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
 import           GHC.Int (Int8(..), Int16(..), Int32(..), Int64(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (naturalToWordMaybe#)
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toWord8 :: Natural -> Maybe Word8
 toWord8 = Bits.toIntegralSized
@@ -99,18 +105,19 @@ toInteger = fromIntegral
 toCInt :: Natural -> Maybe CInt
 toCInt x = CInt <$> toInt32 x
 
--- | Checked conversion, fails if outside exact float integer range (\u00b116777215).
+-- | Checked conversion, fails if outside exact float integer range (±16777215).
 toFloat :: Natural -> Either Overflows Float
 toFloat x = if
   | x > maxIntegralRepFloat -> Left Overflow
   | otherwise               -> Right $ fromIntegral x
 
--- | Checked conversion, fails if outside exact double integer range (\u00b19007199254740991).
+-- | Checked conversion, fails if outside exact double integer range (±9007199254740991).
 toDouble :: Natural -> Either Overflows Double
 toDouble x = if
   | x > maxIntegralRepDouble -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Via naturalToWordMaybe#, then narrow and roundtrip at Word#
 toWord8# :: Natural -> (# Word8 | (# #) #)
 toWord8# nat = case naturalToWordMaybe# nat of
@@ -212,3 +219,4 @@ toDouble# nat = case naturalToWordMaybe# nat of
   (# | w# #) -> case leWord# w# 9007199254740991## of
     1# -> (# | D# (int2Double# (word2Int# w#)) #)
     _  -> (# Overflow | #)
+#endif

@@ -15,6 +15,7 @@ module Unwitch.Convert.Int
   , toFloat
   , toDouble
   , toCInt
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toInt8#
@@ -28,6 +29,7 @@ module Unwitch.Convert.Int
   , toNatural#
   , toFloat#
   , toDouble#
+#endif
   )
 where
 
@@ -39,6 +41,7 @@ import           Data.Int
 import           Numeric.Natural (Natural)
 import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            intToInt8#, int8ToInt#, intToInt16#, int16ToInt#,
                            intToInt32#, int32ToInt#,
@@ -52,12 +55,15 @@ import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
 import           GHC.Int (Int8(..), Int16(..), Int32(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (Natural(NS))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toInt8 :: Int -> Maybe Int8
 toInt8 = Bits.toIntegralSized
@@ -113,6 +119,7 @@ toDouble x = if
   | fromIntegral x > (maxIntegralRepDouble :: Integer)  -> Left Overflow
   | otherwise                                           -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Signed narrowing, roundtrip at Int#
 toInt8# :: Int -> (# Int8 | (# #) #)
 toInt8# (I# x#) =
@@ -194,3 +201,4 @@ toDouble# (I# i#) = case i# <# -9007199254740991# of
   _  -> case i# ># 9007199254740991# of
     1# -> (# Overflow | #)
     _  -> (# | D# (int2Double# i#) #)
+#endif

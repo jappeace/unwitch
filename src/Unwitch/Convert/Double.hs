@@ -25,7 +25,6 @@ where
 import           Data.Bifunctor(first)
 import           Data.Fixed (Fixed, HasResolution)
 import           Unwitch.Constant
-import qualified GHC.Float as F
 import           Unwitch.Convert.Ratio(unwrapIfDenominatorOne)
 import qualified Prelude
 import           Unwitch.Errors
@@ -38,7 +37,7 @@ import Foreign.C.Types (CInt(CInt))
 
 -- | Lossy narrowing conversion, may lose precision.
 toFloat :: Double -> Float
-toFloat = F.double2Float
+toFloat = realToFrac
 
 -- | Converts a Double to a Fixed value. Rejects NaN and infinities.
 toFixed :: (HasResolution a) => Double -> Either RationalErrors (Fixed a)
