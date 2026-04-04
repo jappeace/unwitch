@@ -12,6 +12,16 @@
   Int32 value fits without loss.
 + CInt.toInt now delegates to Int32.toInt instead of using fromIntegral.
 
+### Added
++ Add MicroHs CI support — all exposed modules are compiled with mhs
++ Guard GHC-specific code behind CPP: unboxed types, GHC.Exts imports,
+  MagicHash/UnboxedSums/UnboxedTuples extensions, and ghc-bignum dependency
++ Guard CInt module and all toCInt functions behind __GLASGOW_HASKELL__
+  (MicroHs defines CInt as a newtype over Int, not Int32)
++ Replace GHC.Float.double2Float/float2Double with portable realToFrac
++ Replace Data.Text.all with Prelude.all for MicroHs compatibility
++ CI module list is now extracted from the cabal file automatically
+
 ## Version 2.2.0
 + New module Unwitch.Convert.CInt — conversions from CInt (Foreign.C.Types)
   to all supported numeric types (Int, Int8–64, Word, Word8–64, Integer,
