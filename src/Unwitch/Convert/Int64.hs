@@ -14,7 +14,9 @@ module Unwitch.Convert.Int64
   , toNatural
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
 #ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
@@ -40,9 +42,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
 #ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            int64ToInt#, intToInt64#,
                            intToInt8#, int8ToInt#,
@@ -81,9 +83,11 @@ toInt32 = Bits.toIntegralSized
 toInt :: Int64 -> Maybe Int
 toInt = Bits.toIntegralSized
 
+#ifdef __GLASGOW_HASKELL__
 -- | Narrowing conversion via Int32, fails if outside Int32 range.
 toCInt :: Int64 -> Maybe CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
 toInteger :: Int64 -> Integer
 toInteger = fromIntegral

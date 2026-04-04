@@ -14,7 +14,9 @@ module Unwitch.Convert.Int8
   , toNatural
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
 #ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
@@ -33,9 +35,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
 #ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Word(..), int8ToInt#, int2Word#,
                            wordToWord8#, wordToWord16#, wordToWord32#,
                            wordToWord64#, (>=#))
@@ -88,9 +90,11 @@ toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Widening conversion via Int32, always succeeds.
 toCInt :: Int8 -> CInt
 toCInt x = CInt $ toInt32 x
+#endif
 
 toFloat :: Int8 -> Float
 toFloat = fromIntegral

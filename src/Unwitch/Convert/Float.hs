@@ -14,7 +14,9 @@ module Unwitch.Convert.Float
   , toWord64
   , toWord
   , toNatural
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
   , ViaIntegerErrors(..)
   , IntegerErrors(..)
   , RationalErrors(..)
@@ -31,7 +33,9 @@ import qualified Unwitch.Convert.Integer as Integer
 import Data.Word
 import Data.Int
 import Numeric.Natural (Natural)
+#ifdef __GLASGOW_HASKELL__
 import Foreign.C.Types (CInt(CInt))
+#endif
 
 toDouble :: Float -> Double
 toDouble = realToFrac
@@ -99,9 +103,11 @@ toNatural float = do
     Left err -> Left $ MkInteger $ IntegerFlow integer err
     Right n -> Right n
 
+#ifdef __GLASGOW_HASKELL__
 -- | Converts via 'Integer', fails if not a whole number or out of range.
 toCInt :: Float -> Either ViaIntegerErrors CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
 -- | Convert via 'Integer' then narrow, combining errors.
 toViaInteger :: (Integer -> Maybe a) -> Float -> Either ViaIntegerErrors a
