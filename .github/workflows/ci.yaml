@@ -47,7 +47,7 @@ jobs:
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
     - name: Build with MicroHs
       run: |
-        nix-shell -p haskellPackages.MicroHs --run "
+        nix-shell -p haskellPackages.MicroHs haskellPackages.cpphs --run "
           export LANG=C.UTF-8
           mhs -XCPP -isrc -c Unwitch.Errors
           mhs -XCPP -isrc -c Unwitch.Constant
