@@ -47,33 +47,14 @@ jobs:
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
     - name: Build with MicroHs
       run: |
+        MODULES=$(sed -n '/^  exposed-modules:/,/^  [a-z]/p' unwitch.cabal | grep '^\s*Unwitch' | tr -d ' ,' | tr '\n' ' ')
         nix-shell -p haskellPackages.MicroHs haskellPackages.cpphs --run "
           export LANG=C.UTF-8
-          mhs -XCPP -isrc -c Unwitch.Errors
-          mhs -XCPP -isrc -c Unwitch.Constant
-          mhs -XCPP -isrc -c Unwitch.Convert.Ratio
-          mhs -XCPP -isrc -c Unwitch.Convert.Float
-          mhs -XCPP -isrc -c Unwitch.Convert.Double
-          mhs -XCPP -isrc -c Unwitch.Convert.Fixed
-          mhs -XCPP -isrc -c Unwitch.Convert.Integer
-          mhs -XCPP -isrc -c Unwitch.Convert.Natural
-          mhs -XCPP -isrc -c Unwitch.Convert.Int
-          mhs -XCPP -isrc -c Unwitch.Convert.Int8
-          mhs -XCPP -isrc -c Unwitch.Convert.Int16
-          mhs -XCPP -isrc -c Unwitch.Convert.Int32
-          mhs -XCPP -isrc -c Unwitch.Convert.Int64
-          mhs -XCPP -isrc -c Unwitch.Convert.Word
-          mhs -XCPP -isrc -c Unwitch.Convert.Word8
-          mhs -XCPP -isrc -c Unwitch.Convert.Word16
-          mhs -XCPP -isrc -c Unwitch.Convert.Word32
-          mhs -XCPP -isrc -c Unwitch.Convert.Word64
-          mhs -XCPP -isrc -c Unwitch.Convert.CInt
-          mhs -XCPP -isrc -c Unwitch.Convert.Char
-          mhs -XCPP -isrc -c Unwitch.Convert.Text
-          mhs -XCPP -isrc -c Unwitch.Convert.LazyText
-          mhs -XCPP -isrc -c Unwitch.Convert.ByteString
-          mhs -XCPP -isrc -c Unwitch.Convert.LazyByteString
-          mhs -XCPP -isrc -c Unwitch.Convert.ShortByteString
+          set -e
+          for mod in $MODULES; do
+            echo \"Compiling \$mod\"
+            mhs -XCPP -isrc -c \$mod
+          done
         "
     - name: Cancel workflow on failure
       if: failure()
