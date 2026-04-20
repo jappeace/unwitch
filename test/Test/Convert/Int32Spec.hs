@@ -20,9 +20,13 @@ spec = describe "Unwitch.Convert.Int32" $ do
     it "rejects out-of-range" $
       Int32.toInt8 (200 :: Int32) `shouldBe` Nothing
 
-  describe "toInt (fallible via toIntegralSized)" $
+  describe "toInt (total)" $ do
     it "converts 0" $
-      Int32.toInt 0 `shouldBe` Just 0
+      Int32.toInt 0 `shouldBe` (0 :: Int)
+    it "converts maxBound" $
+      Int32.toInt maxBound `shouldBe` (2147483647 :: Int)
+    it "converts minBound" $
+      Int32.toInt minBound `shouldBe` (-2147483648 :: Int)
 
   describe "toWord8 (fallible)" $ do
     it "rejects negative" $

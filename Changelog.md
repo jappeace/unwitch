@@ -1,5 +1,11 @@
 # Change log for unwitch project
 
+## Version 2.3.0
++ Make Int32.toInt total (Int32 -> Int instead of Int32 -> Maybe Int).
+  GHC's Int# is always at least 32 bits wide (WORD_SIZE_IN_BITS),
+  so every Int32 value fits without loss.
++ CInt.toInt now delegates to Int32.toInt instead of using fromIntegral.
+
 ## Version 2.2.0
 + New module Unwitch.Convert.CInt — conversions from CInt (Foreign.C.Types)
   to all supported numeric types (Int, Int8–64, Word, Word8–64, Integer,

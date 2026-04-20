@@ -44,7 +44,7 @@ toInt64 (CInt x) = Int32.toInt64 x
 
 -- | Total conversion, Int is at least 32 bits wide.
 toInt :: CInt -> Int
-toInt (CInt x) = fromIntegral x
+toInt (CInt x) = Int32.toInt x
 
 -- | Total conversion to Integer.
 toInteger :: CInt -> Integer
