@@ -74,6 +74,7 @@ toInt16 = Bits.toIntegralSized
 toInt64 :: Int32 -> Int64
 toInt64 = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Total conversion — GHC implements 'Int' using the primitive type
 -- @Int#@, whose size equals the @MachDeps.h@ constant
 -- @WORD_SIZE_IN_BITS@ (32 on 32-bit platforms, 64 on 64-bit).
@@ -85,10 +86,13 @@ toInt64 = fromIntegral
 -- <https://hackage.haskell.org/package/base/docs/Data-Int.html Data.Int>
 -- ("A fixed-precision integer type with at least the range [-2^29 .. 2^29-1]").
 toInt :: Int32 -> Int
-#ifdef __GLASGOW_HASKELL__
 toInt (I32# x#) = I# (int32ToInt# x#)
 #else
-toInt = fromIntegral
+-- | Fallible conversion — the Haskell Report only guarantees 'Int' has
+-- at least the range @[-2^29 .. 2^29-1]@ (30 bits), so 'Int32' values
+-- outside that range may not fit on non-GHC compilers.
+toInt :: Int32 -> Maybe Int
+toInt = Bits.toIntegralSized
 #endif
 
 toInteger :: Int32 -> Integer

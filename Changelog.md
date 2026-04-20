@@ -2,14 +2,13 @@
 
 ## Version 3.0.0
 
-### Breaking changes
-+ Int32.toInt is now total (Int32 -> Int instead of Int32 -> Maybe Int).
-  Code pattern matching on Just/Nothing will need updating.
-
-### Changed
-+ Int32.toInt uses GHC primitive int32ToInt# directly — GHC's Int#
-  is always at least 32 bits wide (WORD_SIZE_IN_BITS), so every
-  Int32 value fits without loss.
+### Breaking changes (GHC only)
++ Int32.toInt is now total on GHC (Int32 -> Int instead of Int32 -> Maybe Int).
+  GHC's Int# is always at least 32 bits wide (WORD_SIZE_IN_BITS), so every
+  Int32 value fits without loss. Code pattern matching on Just/Nothing will
+  need updating.
++ On non-GHC compilers, Int32.toInt retains the Maybe Int return type since
+  the Haskell Report only guarantees Int has 30 bits.
 + CInt.toInt now delegates to Int32.toInt instead of using fromIntegral.
 
 ### Added
