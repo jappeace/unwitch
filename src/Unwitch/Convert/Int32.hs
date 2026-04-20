@@ -85,7 +85,11 @@ toInt64 = fromIntegral
 -- <https://hackage.haskell.org/package/base/docs/Data-Int.html Data.Int>
 -- ("A fixed-precision integer type with at least the range [-2^29 .. 2^29-1]").
 toInt :: Int32 -> Int
+#ifdef __GLASGOW_HASKELL__
 toInt (I32# x#) = I# (int32ToInt# x#)
+#else
+toInt = fromIntegral
+#endif
 
 toInteger :: Int32 -> Integer
 toInteger = fromIntegral
