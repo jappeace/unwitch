@@ -14,7 +14,10 @@ module Unwitch.Convert.Int8
   , toNatural
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
@@ -23,6 +26,7 @@ module Unwitch.Convert.Int8
   , toWord64#
   , toWord#
   , toNatural#
+#endif
   )
 where
 
@@ -31,20 +35,24 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Word(..), int8ToInt#, int2Word#,
                            wordToWord8#, wordToWord16#, wordToWord32#,
                            wordToWord64#, (>=#))
 import           GHC.Int (Int8(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (Natural(NS))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toInt16 :: Int8 -> Int16
 toInt16 = fromIntegral
@@ -82,9 +90,11 @@ toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Widening conversion via Int32, always succeeds.
 toCInt :: Int8 -> CInt
 toCInt x = CInt $ toInt32 x
+#endif
 
 toFloat :: Int8 -> Float
 toFloat = fromIntegral
@@ -92,6 +102,7 @@ toFloat = fromIntegral
 toDouble :: Int8 -> Double
 toDouble = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Signed->unsigned, check non-negative
 toWord8# :: Int8 -> (# Word8 | (# #) #)
 toWord8# (I8# x8#) = case int8ToInt# x8# >=# 0# of
@@ -127,3 +138,4 @@ toNatural# :: Int8 -> (# Overflows | Natural #)
 toNatural# (I8# x8#) = case int8ToInt# x8# >=# 0# of
   1# -> (# | NS (int2Word# (int8ToInt# x8#)) #)
   _  -> (# Underflow | #)
+#endif

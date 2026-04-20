@@ -14,12 +14,16 @@ module Unwitch.Convert.Word16
   , toInteger
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
   , toInt8#
   , toInt16#
+#endif
   )
 where
 
@@ -27,8 +31,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (word16ToWord#, word2Int#,
                            wordToWord8#, word8ToWord#,
                            intToInt8#, int8ToInt#,
@@ -36,12 +41,15 @@ import           GHC.Exts (word16ToWord#, word2Int#,
                            eqWord#, (==#))
 import           GHC.Int (Int8(..), Int16(..))
 import           GHC.Word (Word8(..), Word16(..))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toWord8 :: Word16 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
@@ -82,10 +90,13 @@ toFloat = fromIntegral
 toDouble :: Word16 -> Double
 toDouble = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Widening conversion via Int32, always succeeds.
 toCInt :: Word16 -> CInt
 toCInt x = CInt $ toInt32 x
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- | Unsigned narrowing, roundtrip at Word#
 toWord8# :: Word16 -> (# Word8 | (# #) #)
 toWord8# (W16# w16#) =
@@ -112,3 +123,4 @@ toInt16# (W16# w16#) =
   in case int16ToInt# n# ==# i# of
     1# -> (# I16# n# | #)
     _  -> (# | (# #) #)
+#endif

@@ -14,7 +14,10 @@ module Unwitch.Convert.Word64
   , toInteger
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
@@ -28,6 +31,7 @@ module Unwitch.Convert.Word64
   , toInt#
   , toFloat#
   , toDouble#
+#endif
   )
 where
 
@@ -37,8 +41,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            word64ToWord#, wordToWord64#,
                            word2Int#,
@@ -52,12 +57,15 @@ import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            (>=#))
 import           GHC.Int (Int8(..), Int16(..), Int32(..), Int64(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toWord8 :: Word64 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
@@ -92,9 +100,11 @@ toInt = Bits.toIntegralSized
 toInteger :: Word64 -> Integer
 toInteger = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Narrowing conversion via Int32, fails if outside Int32 range.
 toCInt :: Word64 -> Maybe CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
 -- | Checked conversion, fails with 'Overflow' if outside exact float integer range.
 toFloat :: Word64 -> Either Overflows Float
@@ -108,6 +118,7 @@ toDouble x = if
   | x > maxIntegralRepDouble -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Unsigned narrowing via Word64# comparison
 toWord8# :: Word64 -> (# Word8 | (# #) #)
 toWord8# (W64# w64#) =
@@ -194,3 +205,4 @@ toDouble# :: Word64 -> (# Overflows | Double #)
 toDouble# (W64# w64#) = case leWord64# w64# (wordToWord64# 9007199254740991##) of
   1# -> (# | D# (int2Double# (word2Int# (word64ToWord# w64#))) #)
   _  -> (# Overflow | #)
+#endif

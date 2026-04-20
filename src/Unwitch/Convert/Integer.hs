@@ -14,7 +14,10 @@ module Unwitch.Convert.Integer
   , toWord32
   , toWord64
   , toWord
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toDouble#
@@ -30,6 +33,7 @@ module Unwitch.Convert.Integer
   , toWord32#
   , toWord64#
   , toWord#
+#endif
   )
 where
 
@@ -39,6 +43,7 @@ import qualified Data.Bits as Bits
 import Data.Word
 import Data.Int
 import Numeric.Natural (Natural)
+#ifdef __GLASGOW_HASKELL__
 import Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            intToInt8#, int8ToInt#,
@@ -57,21 +62,24 @@ import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Integer (Integer(..), integerToWord#,
                                   integerFromWord#, integerEq#)
 import           GHC.Num.Natural (Natural(NS, NB))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
--- | Checked conversion, fails if outside exact double integer range (\u00b19007199254740991).
+-- | Checked conversion, fails if outside exact double integer range (±9007199254740991).
 toDouble :: Integer -> Either Overflows Double
 toDouble integer = if
     | integer < -maxIntegralRepDouble -> Left Underflow
     | integer > maxIntegralRepDouble -> Left Overflow
     | otherwise -> Right $ Prelude.fromIntegral integer
 
--- | Checked conversion, fails if outside exact float integer range (\u00b116777215).
+-- | Checked conversion, fails if outside exact float integer range (±16777215).
 toFloat :: Integer -> Either Overflows Float
 toFloat integer = if
     | integer < -maxIntegralRepFloat -> Left Underflow
@@ -114,10 +122,13 @@ toWord64 = Bits.toIntegralSized
 toWord :: Integer -> Maybe Word
 toWord = Bits.toIntegralSized
 
+#ifdef __GLASGOW_HASKELL__
 -- | Narrowing conversion via Int32, fails if outside Int32 range.
 toCInt :: Integer -> Maybe CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- | Bounds-checked double conversion via IS/IP/IN
 toDouble# :: Integer -> (# Overflows | Double #)
 toDouble# x = case x of
@@ -254,3 +265,4 @@ toWord# x = case x of
       1# -> (# W# w# | #)
       _  -> (# | (# #) #)
   IN _ -> (# | (# #) #)
+#endif

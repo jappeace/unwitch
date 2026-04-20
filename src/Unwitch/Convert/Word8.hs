@@ -14,10 +14,14 @@ module Unwitch.Convert.Word8
   , toInteger
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toInt8#
+#endif
   )
 where
 
@@ -25,18 +29,22 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (word8ToWord#, word2Int#, intToInt8#, int8ToInt#,
                            (==#))
 import           GHC.Int (Int8(..))
 import           GHC.Word (Word8(..))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toWord16 :: Word8 -> Word16
 toWord16 = fromIntegral
@@ -77,10 +85,13 @@ toFloat = fromIntegral
 toDouble :: Word8 -> Double
 toDouble = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Widening conversion via Int32, always succeeds.
 toCInt :: Word8 -> CInt
 toCInt x = CInt $ toInt32 x
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- | Unsigned->signed, source fits in Int#, roundtrip at Int#
 toInt8# :: Word8 -> (# Int8 | (# #) #)
 toInt8# (W8# w8#) =
@@ -89,3 +100,4 @@ toInt8# (W8# w8#) =
   in case int8ToInt# n# ==# i# of
     1# -> (# I8# n# | #)
     _  -> (# | (# #) #)
+#endif

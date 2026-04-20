@@ -14,7 +14,10 @@ module Unwitch.Convert.Word
   , toInteger
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
@@ -27,6 +30,7 @@ module Unwitch.Convert.Word
   , toInt#
   , toFloat#
   , toDouble#
+#endif
   )
 where
 
@@ -36,8 +40,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            wordToWord8#, word8ToWord#,
                            wordToWord16#, word16ToWord#,
@@ -49,12 +54,15 @@ import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            eqWord#, leWord#, (>=#))
 import           GHC.Int (Int8(..), Int16(..), Int32(..), Int64(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toWord8 :: Word -> Maybe Word8
 toWord8 = Bits.toIntegralSized
@@ -89,9 +97,11 @@ toInt = Bits.toIntegralSized
 toInteger :: Word -> Integer
 toInteger = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Narrowing conversion via Int32, fails if outside Int32 range.
 toCInt :: Word -> Maybe CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
 -- | Checked conversion, fails if outside exact float integer range (+-16777215).
 toFloat :: Word -> Either Overflows Float
@@ -105,6 +115,7 @@ toDouble x = if
   | fromIntegral x > (maxIntegralRepDouble :: Integer) -> Left Overflow
   | otherwise                                          -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Unsigned narrowing, roundtrip at Word#
 toWord8# :: Word -> (# Word8 | (# #) #)
 toWord8# (W# w#) =
@@ -174,3 +185,4 @@ toDouble# :: Word -> (# Overflows | Double #)
 toDouble# (W# w#) = case leWord# w# 9007199254740991## of
   1# -> (# | D# (int2Double# (word2Int# w#)) #)
   _  -> (# Overflow | #)
+#endif

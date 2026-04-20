@@ -5,6 +5,8 @@ module Test.Convert.UnboxedSpec
 where
 
 import Test.Hspec
+
+#ifdef __GLASGOW_HASKELL__
 import Test.Hspec.QuickCheck (prop)
 
 import qualified Unwitch.Convert.Integer as Integer
@@ -23,8 +25,10 @@ import qualified Unwitch.Convert.Char as Char
 import Data.Int
 import Data.Word
 import Numeric.Natural (Natural)
+#endif
 
 spec :: Spec
+#ifdef __GLASGOW_HASKELL__
 spec = describe "Unboxed sum variants" $ do
 
   describe "Integer" $ do
@@ -152,3 +156,6 @@ spec = describe "Unboxed sum variants" $ do
         (# y | #)      -> Char.fromInt x `shouldBe` Just y
         (# | (# #) #)  -> Char.fromInt x `shouldBe` Nothing
 
+#else
+spec = pure ()
+#endif

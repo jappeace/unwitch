@@ -14,7 +14,10 @@ module Unwitch.Convert.Int32
   , toNatural
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toInt8#
@@ -27,6 +30,7 @@ module Unwitch.Convert.Int32
   , toWord#
   , toNatural#
   , toFloat#
+#endif
   )
 where
 
@@ -36,8 +40,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..),
                            int32ToInt#, intToInt8#, int8ToInt#,
                            intToInt16#, int16ToInt#,
@@ -50,12 +55,15 @@ import           GHC.Exts (Int(..), Word(..), Float(..),
 import           GHC.Int (Int8(..), Int16(..), Int32(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (Natural(NS))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toInt8 :: Int32 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
@@ -66,6 +74,7 @@ toInt16 = Bits.toIntegralSized
 toInt64 :: Int32 -> Int64
 toInt64 = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Total conversion — GHC implements 'Int' using the primitive type
 -- @Int#@, whose size equals the @MachDeps.h@ constant
 -- @WORD_SIZE_IN_BITS@ (32 on 32-bit platforms, 64 on 64-bit).
@@ -78,6 +87,13 @@ toInt64 = fromIntegral
 -- ("A fixed-precision integer type with at least the range [-2^29 .. 2^29-1]").
 toInt :: Int32 -> Int
 toInt (I32# x#) = I# (int32ToInt# x#)
+#else
+-- | Fallible conversion — the Haskell Report only guarantees 'Int' has
+-- at least the range @[-2^29 .. 2^29-1]@ (30 bits), so 'Int32' values
+-- outside that range may not fit on non-GHC compilers.
+toInt :: Int32 -> Maybe Int
+toInt = Bits.toIntegralSized
+#endif
 
 toInteger :: Int32 -> Integer
 toInteger = fromIntegral
@@ -110,13 +126,16 @@ toFloat x = if
   | x > maxIntegralRepFloat  -> Left Overflow
   | otherwise                -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Direct wrapping, CInt is a newtype over Int32.
 toCInt :: Int32 -> CInt
 toCInt = CInt
+#endif
 
 toDouble :: Int32 -> Double
 toDouble = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Signed narrowing, roundtrip at Int#
 toInt8# :: Int32 -> (# Int8 | (# #) #)
 toInt8# (I32# x32#) =
@@ -190,3 +209,4 @@ toFloat# (I32# x32#) =
     _  -> case i# ># 16777215# of
       1# -> (# Overflow | #)
       _  -> (# | F# (int2Float# i#) #)
+#endif

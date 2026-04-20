@@ -1,5 +1,8 @@
 -- | Conversions from 'CInt'.
+-- CInt is GHC-specific (wraps Int32 in GHC, Int in MicroHs),
+-- so this module is only available under GHC.
 module Unwitch.Convert.CInt
+#ifdef __GLASGOW_HASKELL__
   ( -- * Conversions
     toInt8
   , toInt16
@@ -16,8 +19,10 @@ module Unwitch.Convert.CInt
   , toFloat
   , toDouble
   )
+#endif
 where
 
+#ifdef __GLASGOW_HASKELL__
 import           Unwitch.Errors
 import qualified Unwitch.Convert.Int32 as Int32
 import           Data.Word
@@ -81,3 +86,4 @@ toFloat (CInt x) = Int32.toFloat x
 -- | Total conversion, all Int32 values are exactly representable as Double.
 toDouble :: CInt -> Double
 toDouble (CInt x) = Int32.toDouble x
+#endif

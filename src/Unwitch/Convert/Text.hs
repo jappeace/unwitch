@@ -20,7 +20,11 @@ import Data.Text.Encoding qualified as TE
 import Data.Text.Lazy qualified as LT
 
 toLazyText :: Text -> LT.Text
+#ifdef __GLASGOW_HASKELL__
 toLazyText = LT.fromStrict
+#else
+toLazyText = LT.toLazy
+#endif
 
 toString :: Text -> String
 toString = T.unpack
@@ -45,10 +49,10 @@ toByteStringUtf32BE = TE.encodeUtf32BE
 
 -- | Returns 'Nothing' if any character exceeds @\xFF@.
 toByteStringLatin1 :: Text -> Maybe ByteString
-toByteStringLatin1 t = if T.all isLatin1 t
-  then Just $ BSC8.pack (T.unpack t)
+toByteStringLatin1 t = if all isLatin1 str
+  then Just $ BSC8.pack str
   else Nothing
+  where str = T.unpack t
 
 isLatin1 :: Char -> Bool
 isLatin1 c = c <= '\xFF'
-

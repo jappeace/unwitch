@@ -5,22 +5,28 @@ module Unwitch.Convert.Char
   , toWord
   , fromInt
   , fromWord
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , fromInt#
   , fromWord#
+#endif
   )
 where
 
 import Data.Char (ord, chr)
+#ifdef __GLASGOW_HASKELL__
 import GHC.Exts (Int(..), Word(..), Char(..), chr#,
                  word2Int#, (>=#), (<=#), leWord#, gtWord#)
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 -- | Converts a Char to its Unicode codepoint as Int. Infallible.
 toInt :: Char -> Int
@@ -37,6 +43,14 @@ fromInt i = if isValidCodepoint (fromIntegral i)
   then Just $ chr i
   else Nothing
 
+-- | Converts a Word to a Char if it is a valid Unicode codepoint.
+-- Valid range: 0..0xD7FF and 0xE000..0x10FFFF (excludes surrogates).
+fromWord :: Word -> Maybe Char
+fromWord w = if isValidCodepoint (fromIntegral w)
+  then Just $ chr (fromIntegral w)
+  else Nothing
+
+#ifdef __GLASGOW_HASKELL__
 -- | Unboxed variant of 'fromInt'. Checks valid Unicode codepoint range.
 fromInt# :: Int -> (# Char | (# #) #)
 fromInt# (I# i#) = case i# >=# 0# of
@@ -49,13 +63,6 @@ fromInt# (I# i#) = case i# >=# 0# of
       _  -> (# | (# #) #)
   _  -> (# | (# #) #)
 
--- | Converts a Word to a Char if it is a valid Unicode codepoint.
--- Valid range: 0..0xD7FF and 0xE000..0x10FFFF (excludes surrogates).
-fromWord :: Word -> Maybe Char
-fromWord w = if isValidCodepoint (fromIntegral w)
-  then Just $ chr (fromIntegral w)
-  else Nothing
-
 -- | Unboxed variant of 'fromWord'. Checks valid Unicode codepoint range.
 fromWord# :: Word -> (# Char | (# #) #)
 fromWord# (W# w#) = case leWord# w# 0xD7FF## of
@@ -65,6 +72,7 @@ fromWord# (W# w#) = case leWord# w# 0xD7FF## of
       1# -> (# C# (chr# (word2Int# w#)) | #)
       _  -> (# | (# #) #)
     _  -> (# | (# #) #)
+#endif
 
 isValidCodepoint :: Integer -> Bool
 isValidCodepoint cp =

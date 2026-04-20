@@ -14,7 +14,10 @@ module Unwitch.Convert.Int16
   , toNatural
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toInt8#
@@ -24,6 +27,7 @@ module Unwitch.Convert.Int16
   , toWord64#
   , toWord#
   , toNatural#
+#endif
   )
 where
 
@@ -32,8 +36,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Word(..), int16ToInt#, intToInt8#, int8ToInt#,
                            int2Word#, word2Int#,
                            wordToWord8#, word8ToWord#,
@@ -42,12 +47,15 @@ import           GHC.Exts (Word(..), int16ToInt#, intToInt8#, int8ToInt#,
 import           GHC.Int (Int8(..), Int16(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (Natural(NS))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toInt8 :: Int16 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
@@ -85,9 +93,11 @@ toNatural x = if
   | x < 0     -> Left Underflow
   | otherwise  -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Widening conversion via Int32, always succeeds.
 toCInt :: Int16 -> CInt
 toCInt x = CInt $ toInt32 x
+#endif
 
 toFloat :: Int16 -> Float
 toFloat = fromIntegral
@@ -95,6 +105,7 @@ toFloat = fromIntegral
 toDouble :: Int16 -> Double
 toDouble = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Signed narrowing, roundtrip at Int#
 toInt8# :: Int16 -> (# Int8 | (# #) #)
 toInt8# (I16# x16#) =
@@ -142,3 +153,4 @@ toNatural# :: Int16 -> (# Overflows | Natural #)
 toNatural# (I16# x16#) = case int16ToInt# x16# >=# 0# of
   1# -> (# | NS (int2Word# (int16ToInt# x16#)) #)
   _  -> (# Underflow | #)
+#endif

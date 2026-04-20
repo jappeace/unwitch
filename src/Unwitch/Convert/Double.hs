@@ -15,7 +15,9 @@ module Unwitch.Convert.Double
   , toWord64
   , toWord
   , toNatural
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
   , ViaIntegerErrors(..)
   , IntegerErrors(..)
   , RationalErrors(..)
@@ -25,7 +27,6 @@ where
 import           Data.Bifunctor(first)
 import           Data.Fixed (Fixed, HasResolution)
 import           Unwitch.Constant
-import qualified GHC.Float as F
 import           Unwitch.Convert.Ratio(unwrapIfDenominatorOne)
 import qualified Prelude
 import           Unwitch.Errors
@@ -34,11 +35,13 @@ import qualified Unwitch.Convert.Integer as Integer
 import Data.Word
 import Data.Int
 import Numeric.Natural (Natural)
+#ifdef __GLASGOW_HASKELL__
 import Foreign.C.Types (CInt(CInt))
+#endif
 
 -- | Lossy narrowing conversion, may lose precision.
 toFloat :: Double -> Float
-toFloat = F.double2Float
+toFloat = realToFrac
 
 -- | Converts a Double to a Fixed value. Rejects NaN and infinities.
 toFixed :: (HasResolution a) => Double -> Either RationalErrors (Fixed a)
@@ -103,9 +106,11 @@ toNatural double = do
     Left err -> Left $ MkInteger $ IntegerFlow integer err
     Right n -> Right n
 
+#ifdef __GLASGOW_HASKELL__
 -- | Converts via 'Integer', fails if not a whole number or out of range.
 toCInt :: Double -> Either ViaIntegerErrors CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
 -- | Convert via 'Integer' then narrow, combining errors.
 toViaInteger :: (Integer -> Maybe a) -> Double -> Either ViaIntegerErrors a

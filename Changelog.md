@@ -2,15 +2,24 @@
 
 ## Version 3.0.0
 
-### Breaking changes
-+ Int32.toInt is now total (Int32 -> Int instead of Int32 -> Maybe Int).
-  Code pattern matching on Just/Nothing will need updating.
-
-### Changed
-+ Int32.toInt uses GHC primitive int32ToInt# directly — GHC's Int#
-  is always at least 32 bits wide (WORD_SIZE_IN_BITS), so every
-  Int32 value fits without loss.
+### Breaking changes (GHC only)
++ Int32.toInt is now total on GHC (Int32 -> Int instead of Int32 -> Maybe Int).
+  GHC's Int# is always at least 32 bits wide (WORD_SIZE_IN_BITS), so every
+  Int32 value fits without loss. Code pattern matching on Just/Nothing will
+  need updating.
++ On non-GHC compilers, Int32.toInt retains the Maybe Int return type since
+  the Haskell Report only guarantees Int has 30 bits.
 + CInt.toInt now delegates to Int32.toInt instead of using fromIntegral.
+
+### Added
++ Add MicroHs CI support — all exposed modules are compiled with mhs
++ Guard GHC-specific code behind CPP: unboxed types, GHC.Exts imports,
+  MagicHash/UnboxedSums/UnboxedTuples extensions, and ghc-bignum dependency
++ Guard CInt module and all toCInt functions behind __GLASGOW_HASKELL__
+  (MicroHs defines CInt as a newtype over Int, not Int32)
++ Replace GHC.Float.double2Float/float2Double with portable realToFrac
++ Replace Data.Text.all with Prelude.all for MicroHs compatibility
++ CI module list is now extracted from the cabal file automatically
 
 ## Version 2.2.0
 + New module Unwitch.Convert.CInt — conversions from CInt (Foreign.C.Types)

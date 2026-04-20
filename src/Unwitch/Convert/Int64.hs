@@ -14,7 +14,10 @@ module Unwitch.Convert.Int64
   , toNatural
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toInt8#
@@ -29,6 +32,7 @@ module Unwitch.Convert.Int64
   , toNatural#
   , toFloat#
   , toDouble#
+#endif
   )
 where
 
@@ -38,8 +42,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
                            int64ToInt#, intToInt64#,
                            intToInt8#, int8ToInt#,
@@ -56,12 +61,15 @@ import           GHC.Exts (Int(..), Word(..), Float(..), Double(..),
 import           GHC.Int (Int8(..), Int16(..), Int32(..), Int64(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 import           GHC.Num.Natural (Natural(NS))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toInt8 :: Int64 -> Maybe Int8
 toInt8 = Bits.toIntegralSized
@@ -75,9 +83,11 @@ toInt32 = Bits.toIntegralSized
 toInt :: Int64 -> Maybe Int
 toInt = Bits.toIntegralSized
 
+#ifdef __GLASGOW_HASKELL__
 -- | Narrowing conversion via Int32, fails if outside Int32 range.
 toCInt :: Int64 -> Maybe CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
 toInteger :: Int64 -> Integer
 toInteger = fromIntegral
@@ -117,6 +127,7 @@ toDouble x = if
   | x > maxIntegralRepDouble  -> Left Overflow
   | otherwise                 -> Right $ fromIntegral x
 
+#ifdef __GLASGOW_HASKELL__
 -- | Narrow through Int#, compare at Int64#
 toInt8# :: Int64 -> (# Int8 | (# #) #)
 toInt8# (I64# x64#) =
@@ -230,3 +241,4 @@ toDouble# (I64# x64#) =
     _  -> case geInt64# x64# (intToInt64# 0#) of
       1# -> (# Overflow | #)
       _  -> (# Underflow | #)
+#endif

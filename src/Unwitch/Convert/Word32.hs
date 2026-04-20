@@ -14,7 +14,10 @@ module Unwitch.Convert.Word32
   , toInteger
   , toFloat
   , toDouble
+#ifdef __GLASGOW_HASKELL__
   , toCInt
+#endif
+#ifdef __GLASGOW_HASKELL__
   -- * Unboxed conversions
   -- $unboxed
   , toWord8#
@@ -25,6 +28,7 @@ module Unwitch.Convert.Word32
   , toInt32#
   , toInt#
   , toFloat#
+#endif
   )
 where
 
@@ -34,8 +38,9 @@ import qualified Data.Bits as Bits
 import           Data.Word
 import           Data.Int
 import           Numeric.Natural (Natural)
-import           Foreign.C.Types (CInt(CInt))
 import           Prelude hiding (toInteger)
+#ifdef __GLASGOW_HASKELL__
+import           Foreign.C.Types (CInt(CInt))
 import           GHC.Exts (Int(..), Word(..), Float(..),
                            word32ToWord#, word2Int#,
                            wordToWord8#, word8ToWord#,
@@ -47,12 +52,15 @@ import           GHC.Exts (Int(..), Word(..), Float(..),
                            eqWord#, leWord#, (==#), (>=#))
 import           GHC.Int (Int8(..), Int16(..), Int32(..))
 import           GHC.Word (Word8(..), Word16(..), Word32(..))
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- $unboxed
 -- These use GHC unboxed types and unboxed sums for zero-allocation
 -- failure handling. Requires the @MagicHash@, @UnboxedSums@ and
 -- @UnboxedTuples@ language extensions.
 -- See the <https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/primitives.html GHC manual on unboxed types>.
+#endif
 
 toWord8 :: Word32 -> Maybe Word8
 toWord8 = Bits.toIntegralSized
@@ -96,10 +104,13 @@ toFloat x = if
 toDouble :: Word32 -> Double
 toDouble = fromIntegral
 
+#ifdef __GLASGOW_HASKELL__
 -- | Narrowing conversion via Int32, fails if outside Int32 range.
 toCInt :: Word32 -> Maybe CInt
 toCInt x = CInt <$> toInt32 x
+#endif
 
+#ifdef __GLASGOW_HASKELL__
 -- | Unsigned narrowing, roundtrip at Word#
 toWord8# :: Word32 -> (# Word8 | (# #) #)
 toWord8# (W32# w32#) =
@@ -162,3 +173,4 @@ toFloat# :: Word32 -> (# Overflows | Float #)
 toFloat# (W32# w32#) = case leWord# (word32ToWord# w32#) 16777215## of
   1# -> (# | F# (int2Float# (word2Int# (word32ToWord# w32#))) #)
   _  -> (# Overflow | #)
+#endif
